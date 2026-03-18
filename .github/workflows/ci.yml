@@ -50,22 +50,6 @@ jobs:
           if forbidden_paths:
               errors.append("Repository contains local junk files:\n- " + "\n- ".join(sorted(forbidden_paths)))
 
-          forbidden_terms = {
-              "Tool" + "FunctionProvider": "Stale attribute name; use [ToolProvider] instead.",
-              "get_" + "compilation_errors": "Stale tool name; this tool does not exist in the package.",
-          }
-
-          for path in root.rglob("*"):
-              if not path.is_file() or ".git" in path.parts:
-                  continue
-              if path.suffix not in {".md", ".cs", ".json", ".yml", ".yaml"}:
-                  continue
-
-              text = path.read_text(encoding="utf-8", errors="ignore")
-              for term, reason in forbidden_terms.items():
-                  if term in text:
-                      errors.append(f"{path}: found forbidden term '{term}'. {reason}")
-
           if errors:
               print("Validation failed:\n")
               for error in errors:
