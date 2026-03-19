@@ -2,8 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace GameBooom.Editor.MCP.Server
@@ -37,10 +41,15 @@ namespace GameBooom.Editor.MCP.Server
                 return request.Method switch
                 {
                     "initialize" => HandleInitialize(request),
+                    "notifications/initialized" => null,
+                    "notifications/cancelled" => null,
                     "tools/list" => HandleToolsList(request),
                     "tools/call" => await HandleToolsCallAsync(request, ct),
                     "prompts/list" => HandlePromptsList(request),
                     "resources/list" => HandleResourcesList(request),
+                    "resources/read" => HandleResourcesRead(request),
+                    "resources/templates/list" => HandleResourceTemplatesList(request),
+                    _ when request.Method != null && request.Method.StartsWith("notifications/") => null,
                     _ => CreateErrorResponse(request.Id, -32601, $"Method not found: {request.Method}")
                 };
             }
@@ -63,7 +72,8 @@ namespace GameBooom.Editor.MCP.Server
                 },
                 ["capabilities"] = new Dictionary<string, object>
                 {
-                    ["tools"] = new Dictionary<string, object>()
+                    ["tools"] = new Dictionary<string, object>(),
+                    ["resources"] = new Dictionary<string, object>()
                 }
             };
 
@@ -124,14 +134,159 @@ namespace GameBooom.Editor.MCP.Server
 
         private MCPResponse HandleResourcesList(MCPRequest request)
         {
+            var resources = new List<object>
+            {
+                new Dictionary<string, object>
+                {
+                    ["uri"] = "unity://scene/current",
+                    ["name"] = "Current Scene",
+                    ["description"] = "Current scene details and a hierarchy snapshot.",
+                    ["mimeType"] = "text/plain"
+                },
+                new Dictionary<string, object>
+                {
+                    ["uri"] = "unity://project/summary",
+                    ["name"] = "Project Summary",
+                    ["description"] = "Project root, top-level Assets folders, and asset counts.",
+                    ["mimeType"] = "text/plain"
+                }
+            };
+
             return new MCPResponse
             {
                 Id = request.Id,
-                Result = new Dictionary<string, object> { ["resources"] = new List<object>() }
+                Result = new Dictionary<string, object> { ["resources"] = resources }
+            };
+        }
+
+        private MCPResponse HandleResourcesRead(MCPRequest request)
+        {
+            if (request.Params == null ||
+                !request.Params.TryGetValue("uri", out var uriObj) ||
+                !(uriObj is string uri) ||
+                string.IsNullOrWhiteSpace(uri))
+            {
+                return CreateErrorResponse(request.Id, -32602, "Invalid params: 'uri' is required");
+            }
+
+            string text;
+            string name;
+
+            switch (uri)
+            {
+                case "unity://scene/current":
+                    name = "Current Scene";
+                    text = BuildCurrentSceneResourceText();
+                    break;
+                case "unity://project/summary":
+                    name = "Project Summary";
+                    text = BuildProjectSummaryResourceText();
+                    break;
+                default:
+                    return CreateErrorResponse(request.Id, -32602, $"Unknown resource URI: {uri}");
+            }
+
+            return new MCPResponse
+            {
+                Id = request.Id,
+                Result = new Dictionary<string, object>
+                {
+                    ["contents"] = new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["uri"] = uri,
+                            ["name"] = name,
+                            ["mimeType"] = "text/plain",
+                            ["text"] = text
+                        }
+                    }
+                }
+            };
+        }
+
+        private MCPResponse HandleResourceTemplatesList(MCPRequest request)
+        {
+            return new MCPResponse
+            {
+                Id = request.Id,
+                Result = new Dictionary<string, object>
+                {
+                    ["resourceTemplates"] = new List<object>()
+                }
             };
         }
 
         private const string ImageDataUriPrefix = "data:image/png;base64,";
+
+        private string BuildCurrentSceneResourceText()
+        {
+            var scene = EditorSceneManager.GetActiveScene();
+            var rootObjects = scene.GetRootGameObjects();
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Current Scene");
+            sb.AppendLine($"Name: {scene.name}");
+            sb.AppendLine($"Path: {(string.IsNullOrEmpty(scene.path) ? "(unsaved scene)" : scene.path)}");
+            sb.AppendLine($"Is Loaded: {scene.isLoaded}");
+            sb.AppendLine($"Is Dirty: {scene.isDirty}");
+            sb.AppendLine($"Root Objects: {rootObjects.Length}");
+            sb.AppendLine($"Total GameObjects: {CountSceneGameObjects(rootObjects)}");
+            sb.AppendLine();
+            sb.AppendLine("Hierarchy Snapshot:");
+
+            if (rootObjects.Length == 0)
+            {
+                sb.AppendLine("- (no root objects)");
+            }
+            else
+            {
+                foreach (var root in rootObjects)
+                {
+                    AppendHierarchySnapshot(sb, root.transform, 0, 3);
+                }
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        private string BuildProjectSummaryResourceText()
+        {
+            var projectRoot = Path.GetDirectoryName(Application.dataPath) ?? Application.dataPath;
+            var assetsPath = Application.dataPath;
+            var topLevelDirectories = Directory.Exists(assetsPath)
+                ? Directory.GetDirectories(assetsPath)
+                : Array.Empty<string>();
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Project Summary");
+            sb.AppendLine($"Project Root: {projectRoot}");
+            sb.AppendLine($"Assets Path: {assetsPath}");
+            sb.AppendLine();
+            sb.AppendLine($"Assets Top-Level Directories ({topLevelDirectories.Length}):");
+
+            if (topLevelDirectories.Length == 0)
+            {
+                sb.AppendLine("- (none)");
+            }
+            else
+            {
+                Array.Sort(topLevelDirectories, StringComparer.OrdinalIgnoreCase);
+                foreach (var directory in topLevelDirectories)
+                {
+                    sb.AppendLine($"- {Path.GetFileName(directory)}");
+                }
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("Asset Counts:");
+            sb.AppendLine($"- Scenes: {CountAssets("t:Scene")}");
+            sb.AppendLine($"- Prefabs: {CountAssets("t:Prefab")}");
+            sb.AppendLine($"- Scripts: {CountAssets("t:MonoScript")}");
+            sb.AppendLine($"- Materials: {CountAssets("t:Material")}");
+
+            return sb.ToString().TrimEnd();
+        }
 
         private List<Dictionary<string, object>> BuildContentFromResult(string result)
         {
@@ -158,6 +313,97 @@ namespace GameBooom.Editor.MCP.Server
             }
 
             return content;
+        }
+
+        private int CountSceneGameObjects(GameObject[] rootObjects)
+        {
+            int count = 0;
+
+            foreach (var rootObject in rootObjects)
+            {
+                if (rootObject == null)
+                    continue;
+
+                count += CountGameObjectTree(rootObject.transform);
+            }
+
+            return count;
+        }
+
+        private int CountGameObjectTree(Transform current)
+        {
+            int count = 1;
+
+            for (int i = 0; i < current.childCount; i++)
+            {
+                count += CountGameObjectTree(current.GetChild(i));
+            }
+
+            return count;
+        }
+
+        private void AppendHierarchySnapshot(StringBuilder sb, Transform current, int depth, int maxDepth)
+        {
+            var indent = new string(' ', depth * 2);
+            var stateSuffix = current.gameObject.activeSelf ? string.Empty : " [inactive]";
+            var tagSuffix = current.tag == "Untagged" ? string.Empty : $" tag={current.tag}";
+            var componentSummary = GetComponentSummary(current.gameObject);
+
+            sb.Append(indent);
+            sb.Append("- ");
+            sb.Append(current.name);
+            sb.Append(stateSuffix);
+            sb.Append(tagSuffix);
+
+            if (!string.IsNullOrEmpty(componentSummary))
+            {
+                sb.Append(" [");
+                sb.Append(componentSummary);
+                sb.Append(']');
+            }
+
+            sb.AppendLine();
+
+            if (depth >= maxDepth)
+            {
+                if (current.childCount > 0)
+                {
+                    sb.Append(new string(' ', (depth + 1) * 2));
+                    sb.AppendLine($"- ... ({current.childCount} children)");
+                }
+
+                return;
+            }
+
+            for (int i = 0; i < current.childCount; i++)
+            {
+                AppendHierarchySnapshot(sb, current.GetChild(i), depth + 1, maxDepth);
+            }
+        }
+
+        private string GetComponentSummary(GameObject gameObject)
+        {
+            var components = gameObject.GetComponents<Component>();
+            var names = new List<string>();
+
+            foreach (var component in components)
+            {
+                if (component == null)
+                    continue;
+
+                var typeName = component.GetType().Name;
+                if (typeName == "Transform" || typeName == "RectTransform")
+                    continue;
+
+                names.Add(typeName);
+            }
+
+            return names.Count > 0 ? string.Join(", ", names) : string.Empty;
+        }
+
+        private int CountAssets(string filter)
+        {
+            return AssetDatabase.FindAssets(filter, new[] { "Assets" }).Length;
         }
 
         private MCPResponse CreateErrorResponse(object requestId, int code, string message)

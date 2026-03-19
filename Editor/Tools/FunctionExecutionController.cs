@@ -95,12 +95,16 @@ namespace GameBooom.Editor.Tools
         public async Task ExecuteSingleAsync(FunctionCall functionCall)
         {
             functionCall.SetState(FunctionState.Executing);
+            DomainReloadHandler.ResetResumeCounter();
             _stateController.SetState(GameBooomState.ExecutingFunction);
+            DomainReloadHandler.SavePendingFunction(functionCall);
 
             try
             {
                 var result = await _invoker.InvokeAsync(functionCall);
                 functionCall.Result = result;
+                DomainReloadHandler.ClearPendingFunction();
+                _stateController.ReturnToPreviousState();
 
                 if (result != null && result.StartsWith("Error:"))
                 {
@@ -114,6 +118,8 @@ namespace GameBooom.Editor.Tools
             }
             catch (Exception ex)
             {
+                DomainReloadHandler.ClearPendingFunction();
+                _stateController.ClearState();
                 functionCall.Error = ex.Message;
                 functionCall.Result = $"Error: {ex.Message}";
                 functionCall.SetState(FunctionState.Failed);

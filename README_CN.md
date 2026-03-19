@@ -35,7 +35,7 @@ GameBooom MCP For Unity 是一个开源的 Unity 编辑器插件，作为 MCP (M
 ## 开始前说明
 
 - 这是一个 **仅限 Editor** 的包，不会向最终构建产物添加运行时代码。
-- MCP Server 默认监听 `http://localhost:8765/`。
+- MCP Server 默认监听 `http://127.0.0.1:8765/`。
 - 只读工具可以直接调用；如果改场景工具返回 approval 错误，请在 GameBooom 设置里重新开启 auto-approve。
 
 ## 快速开始
@@ -61,7 +61,7 @@ openupm add com.gamebooom.unity.mcp
 
 **菜单：GameBooom → MCP Server** 启动服务。
 
-默认运行在 `http://localhost:8765/`。
+默认运行在 `http://127.0.0.1:8765/`。
 
 ### 3. 配置 AI 客户端
 
@@ -73,7 +73,7 @@ openupm add com.gamebooom.unity.mcp
   "mcpServers": {
     "gamebooom": {
       "type": "http",
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -88,7 +88,7 @@ openupm add com.gamebooom.unity.mcp
 {
   "mcpServers": {
     "gamebooom": {
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -104,7 +104,7 @@ openupm add com.gamebooom.unity.mcp
   "servers": {
     "gamebooom": {
       "type": "http",
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -119,7 +119,7 @@ openupm add com.gamebooom.unity.mcp
 {
   "mcpServers": {
     "gamebooom": {
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -135,7 +135,7 @@ openupm add com.gamebooom.unity.mcp
   "mcpServers": {
     "gamebooom": {
       "type": "http",
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -148,7 +148,7 @@ openupm add com.gamebooom.unity.mcp
 
 ```toml
 [mcp_servers.gamebooom]
-url = "http://localhost:8765/"
+url = "http://127.0.0.1:8765/"
 ```
 
 </details>

@@ -7,7 +7,7 @@ GameBooom MCP For Unity is an open-source MCP server for the Unity Editor.
 1. Install via UPM using the Git URL for this repository
 2. Open **GameBooom > MCP Server**
 3. Enable the server and confirm the port
-4. Connect your AI client to `http://localhost:8765/`
+4. Connect your AI client to `http://127.0.0.1:8765/`
 
 ## Highlights
 

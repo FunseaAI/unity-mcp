@@ -9,20 +9,34 @@ using UnityEditor.Compilation;
 
 namespace GameBooom.Editor.Services
 {
+    [InitializeOnLoad]
     internal class CompilationService : ICompilationService, IDisposable
     {
-        private readonly object _lock = new object();
-        private readonly List<CompilerMessage> _latestMessages = new List<CompilerMessage>();
-        private TaskCompletionSource<bool> _compilationFinishedTcs;
+        private static readonly object SyncRoot = new object();
+        private static readonly List<CompilerMessage> LatestMessages = new List<CompilerMessage>();
+        private static TaskCompletionSource<bool> _compilationFinishedTcs = CreateCompletionSource();
+        private static event Action CompilationFinished;
+        private static bool _subscribed;
+
+        public static CompilationService Instance { get; private set; }
 
         public bool IsCompiling => EditorApplication.isCompiling;
-        public event Action OnCompilationFinished;
+        public event Action OnCompilationFinished
+        {
+            add => CompilationFinished += value;
+            remove => CompilationFinished -= value;
+        }
+
+        static CompilationService()
+        {
+            EnsureInitialized();
+            Instance = new CompilationService();
+        }
 
         public CompilationService()
         {
-            CompilationPipeline.compilationStarted += HandleCompilationStarted;
-            CompilationPipeline.assemblyCompilationFinished += HandleAssemblyCompilationFinished;
-            CompilationPipeline.compilationFinished += HandleCompilationFinished;
+            EnsureInitialized();
+            Instance = this;
         }
 
         public async Task<bool> WaitForCompilationAsync(bool forceRefresh, int timeoutSeconds)
@@ -30,15 +44,16 @@ namespace GameBooom.Editor.Services
             if (forceRefresh)
             {
                 AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+                if (!await WaitForCompilationToStartAsync(timeoutSeconds).ConfigureAwait(false))
+                    return true;
             }
-
-            if (!EditorApplication.isCompiling)
+            else if (!EditorApplication.isCompiling)
             {
                 return true;
             }
 
             TaskCompletionSource<bool> waitSource;
-            lock (_lock)
+            lock (SyncRoot)
             {
                 if (_compilationFinishedTcs == null || _compilationFinishedTcs.Task.IsCompleted)
                 {
@@ -60,9 +75,9 @@ namespace GameBooom.Editor.Services
             maxEntries = Math.Max(1, maxEntries);
 
             List<CompilerMessage> messages;
-            lock (_lock)
+            lock (SyncRoot)
             {
-                messages = _latestMessages.ToList();
+                messages = LatestMessages.ToList();
             }
 
             var filtered = messages
@@ -89,38 +104,66 @@ namespace GameBooom.Editor.Services
             return "Compilation issues:\n" + string.Join("\n", lines);
         }
 
-        private void HandleCompilationStarted(object context)
+        private static void EnsureInitialized()
         {
-            lock (_lock)
+            if (_subscribed)
+                return;
+
+            _subscribed = true;
+            CompilationPipeline.compilationStarted += HandleCompilationStarted;
+            CompilationPipeline.assemblyCompilationFinished += HandleAssemblyCompilationFinished;
+            CompilationPipeline.compilationFinished += HandleCompilationFinished;
+        }
+
+        private static async Task<bool> WaitForCompilationToStartAsync(int timeoutSeconds)
+        {
+            if (EditorApplication.isCompiling)
+                return true;
+
+            var waitUntil = DateTime.UtcNow.AddSeconds(Math.Min(timeoutSeconds, 2));
+            while (DateTime.UtcNow < waitUntil)
             {
-                _latestMessages.Clear();
+                if (EditorApplication.isCompiling)
+                    return true;
+
+                await Task.Delay(100).ConfigureAwait(false);
+            }
+
+            return false;
+        }
+
+        private static void HandleCompilationStarted(object context)
+        {
+            lock (SyncRoot)
+            {
+                LatestMessages.Clear();
                 _compilationFinishedTcs = CreateCompletionSource();
             }
         }
 
-        private void HandleAssemblyCompilationFinished(string assemblyPath, CompilerMessage[] messages)
+        private static void HandleAssemblyCompilationFinished(string assemblyPath, CompilerMessage[] messages)
         {
             if (messages == null || messages.Length == 0)
             {
                 return;
             }
 
-            lock (_lock)
+            lock (SyncRoot)
             {
-                _latestMessages.AddRange(messages);
+                LatestMessages.AddRange(messages);
             }
         }
 
-        private void HandleCompilationFinished(object obj)
+        private static void HandleCompilationFinished(object obj)
         {
             TaskCompletionSource<bool> waitSource = null;
-            lock (_lock)
+            lock (SyncRoot)
             {
                 waitSource = _compilationFinishedTcs;
             }
 
             waitSource?.TrySetResult(true);
-            OnCompilationFinished?.Invoke();
+            CompilationFinished?.Invoke();
         }
 
         private static TaskCompletionSource<bool> CreateCompletionSource()
@@ -130,9 +173,6 @@ namespace GameBooom.Editor.Services
 
         public void Dispose()
         {
-            CompilationPipeline.compilationStarted -= HandleCompilationStarted;
-            CompilationPipeline.assemblyCompilationFinished -= HandleAssemblyCompilationFinished;
-            CompilationPipeline.compilationFinished -= HandleCompilationFinished;
         }
     }
 }

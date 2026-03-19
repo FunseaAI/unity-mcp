@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using GameBooom.Editor.Settings;
+using GameBooom.Editor.State;
 using GameBooom.Editor.Threading;
 using GameBooom.Editor.Tools;
 using UnityEngine;
@@ -20,17 +21,20 @@ namespace GameBooom.Editor.MCP.Server
     {
         private readonly IEditorThreadHelper _threadHelper;
         private readonly ISettingsController _settings;
+        private readonly IStateController _stateController;
         private readonly FunctionInvokerController _invoker;
         private readonly MCPInteractionLog _interactionLog;
 
         public MCPExecutionBridge(
             IEditorThreadHelper threadHelper,
             ISettingsController settings,
+            IStateController stateController,
             FunctionInvokerController invoker,
             MCPInteractionLog interactionLog)
         {
             _threadHelper = threadHelper ?? throw new ArgumentNullException(nameof(threadHelper));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _stateController = stateController ?? throw new ArgumentNullException(nameof(stateController));
             _invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
             _interactionLog = interactionLog;
         }
@@ -72,8 +76,14 @@ namespace GameBooom.Editor.MCP.Server
                         return approvalError;
                     }
 
+                    DomainReloadHandler.ResetResumeCounter();
+                    _stateController.SetState(GameBooomState.ExecutingFunction);
+                    DomainReloadHandler.SavePendingFunction(functionCall);
+
                     Debug.Log($"[GameBooom MCP Server] Executing tool: {toolName}");
                     var result = await _invoker.InvokeAsync(functionCall);
+                    DomainReloadHandler.ClearPendingFunction();
+                    _stateController.ReturnToPreviousState();
 
                     if (!string.IsNullOrEmpty(functionCall.Error))
                     {
@@ -88,6 +98,8 @@ namespace GameBooom.Editor.MCP.Server
                 }
                 catch (Exception ex)
                 {
+                    DomainReloadHandler.ClearPendingFunction();
+                    _stateController.ClearState();
                     var exError = $"Error: {ex.Message}";
                     Debug.LogError($"[GameBooom MCP Server] Error executing tool '{toolName}': {ex.Message}\n{ex.StackTrace}");
                     _interactionLog?.Add(toolName, MCPToolCallStatus.Error, exError);

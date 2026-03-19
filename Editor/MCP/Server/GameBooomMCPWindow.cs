@@ -127,32 +127,32 @@ namespace GameBooom.Editor.MCP.Server
                 {
                     Name = "Claude Code",
                     ConfigPath = Path.Combine(homePath, ".claude.json"),
-                    Entry = new Dictionary<string, object> { ["type"] = "http", ["url"] = $"http://localhost:{port}/" },
+                    Entry = new Dictionary<string, object> { ["type"] = "http", ["url"] = $"http://127.0.0.1:{port}/" },
                 },
                 new MCPConfigTarget
                 {
                     Name = "Cursor",
                     ConfigPath = Path.Combine(homePath, ".cursor", "mcp.json"),
-                    Entry = new Dictionary<string, object> { ["url"] = $"http://localhost:{port}/" },
+                    Entry = new Dictionary<string, object> { ["url"] = $"http://127.0.0.1:{port}/" },
                 },
                 new MCPConfigTarget
                 {
                     Name = "VS Code",
                     ConfigPath = Path.Combine(homePath, ".vscode", "mcp.json"),
-                    Entry = new Dictionary<string, object> { ["type"] = "http", ["url"] = $"http://localhost:{port}/" },
+                    Entry = new Dictionary<string, object> { ["type"] = "http", ["url"] = $"http://127.0.0.1:{port}/" },
                     RootKey = "servers"
                 },
                 new MCPConfigTarget
                 {
                     Name = "Trae",
                     ConfigPath = Path.Combine(homePath, ".trae", "mcp.json"),
-                    Entry = new Dictionary<string, object> { ["url"] = $"http://localhost:{port}/" },
+                    Entry = new Dictionary<string, object> { ["url"] = $"http://127.0.0.1:{port}/" },
                 },
                 new MCPConfigTarget
                 {
                     Name = "Kiro",
                     ConfigPath = Path.Combine(homePath, ".kiro", "settings", "mcp.json"),
-                    Entry = new Dictionary<string, object> { ["type"] = "http", ["url"] = $"http://localhost:{port}/" },
+                    Entry = new Dictionary<string, object> { ["type"] = "http", ["url"] = $"http://127.0.0.1:{port}/" },
                     RootKey = "mcpServers"
                 },
                 new MCPConfigTarget
@@ -160,7 +160,7 @@ namespace GameBooom.Editor.MCP.Server
                     Name = "Codex",
                     ConfigPath = Path.Combine(homePath, ".codex", "config.toml"),
                     IsToml = true,
-                    TomlSection = $"[mcp_servers.gamebooom]\nurl = \"http://localhost:{port}/\"\n"
+                    TomlSection = $"[mcp_servers.gamebooom]\nurl = \"http://127.0.0.1:{port}/\"\n"
                 },
             };
 
@@ -350,7 +350,7 @@ namespace GameBooom.Editor.MCP.Server
             if (_statusLabel == null) return;
             if (_mcpServer?.IsRunning == true)
             {
-                _statusLabel.text = $"Running on http://localhost:{_mcpServer.Port}/";
+                _statusLabel.text = $"Running on http://127.0.0.1:{_mcpServer.Port}/";
                 _statusLabel.style.color = new Color(0.4f, 1f, 0.4f);
             }
             else

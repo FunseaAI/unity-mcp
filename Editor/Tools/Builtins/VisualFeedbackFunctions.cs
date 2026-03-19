@@ -3,6 +3,8 @@ using System;
 using System.Reflection;
 using System.Text;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
+using GameBooom.Editor.DI;
+using GameBooom.Editor.Services.UnityLogs;
 using GameBooom.Editor.Tools;
 using UnityEditor;
 using UnityEngine;
@@ -83,13 +85,43 @@ namespace GameBooom.Editor.Tools.Builtins
 
         [Description("Get recent console log messages from Unity. " +
                      "Returns Debug.Log, Debug.LogWarning, and Debug.LogError output. " +
-                     "Useful for checking runtime behavior after play mode actions.")]
+                     "Useful for checking runtime behavior after play mode actions. " +
+                     "Supports reading from the live log cache, clearing the cache, and time-based filtering.")]
         [ReadOnlyTool]
         public static string GetConsoleLogs(
             [ToolParam("Filter by log type: 'all', 'log', 'warning', 'error'", Required = false)] string log_type = "all",
-            [ToolParam("Maximum number of entries to return", Required = false)] int count = 30)
+            [ToolParam("Maximum number of entries to return", Required = false)] int count = 30,
+            [ToolParam("Source: 'auto', 'cache', or 'console'", Required = false)] string source = "auto",
+            [ToolParam("Clear the cached logs before reading", Required = false)] bool clear_cache = false,
+            [ToolParam("Only include cached log entries from the last N seconds (cache/auto only)", Required = false)] int since_seconds = 0)
         {
             count = Mathf.Clamp(count, 1, 200);
+            since_seconds = Mathf.Clamp(since_seconds, 0, 86400);
+            source = string.IsNullOrEmpty(source) ? "auto" : source.ToLowerInvariant();
+
+            var logsRepository = RootScopeServices.Services?.GetService(typeof(UnityLogsRepository)) as UnityLogsRepository;
+            logsRepository?.StartListening();
+
+            if (clear_cache)
+                logsRepository?.Clear();
+
+            if (source != "auto" && source != "cache" && source != "console")
+                return "Error: source must be 'auto', 'cache', or 'console'";
+
+            if (source == "cache" || source == "auto")
+            {
+                var cachedLogs = logsRepository?.GetRecentLogs(log_type, count, since_seconds);
+                if (!string.IsNullOrEmpty(cachedLogs))
+                    return cachedLogs;
+
+                if (source == "cache")
+                    return since_seconds > 0
+                        ? $"No {log_type} entries found in cached logs from the last {since_seconds} second(s)"
+                        : $"No {log_type} entries found in cached logs";
+            }
+
+            if (since_seconds > 0)
+                return "Error: since_seconds is only supported when reading from cache or auto mode with cached results";
 
             var logEntriesType = Type.GetType("UnityEditor.LogEntries, UnityEditor");
             if (logEntriesType == null)
@@ -161,7 +193,7 @@ namespace GameBooom.Editor.Tools.Builtins
                 if (matchCount == 0)
                     return $"No {log_type} entries found in console";
 
-                return $"Console logs ({matchCount} entries, filter: {log_type}):\n{sb}";
+                return $"Console logs ({matchCount} entries, filter: {log_type}, source: console):\n{sb}";
             }
             finally
             {

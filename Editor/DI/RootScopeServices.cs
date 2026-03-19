@@ -2,6 +2,8 @@
 
 using System;
 using GameBooom.Editor.MCP.Server;
+using GameBooom.Editor.Settings;
+using GameBooom.Editor.Services.UnityLogs;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,6 +30,20 @@ namespace GameBooom.Editor.DI
                 services.RegisterServices();
                 _serviceProvider = services.BuildServiceProvider();
                 Debug.Log("[GameBooom] Root services initialized.");
+
+                var unityLogsRepository =
+                    _serviceProvider.GetService(typeof(UnityLogsRepository)) as UnityLogsRepository;
+                unityLogsRepository?.StartListening();
+
+                var settings = _serviceProvider.GetService(typeof(ISettingsController)) as ISettingsController;
+                if (settings?.MCPServerEnabled == true)
+                {
+                    var mcpServer = _serviceProvider.GetService(typeof(MCPServerService)) as MCPServerService;
+                    if (mcpServer != null)
+                    {
+                        _ = mcpServer.StartAsync();
+                    }
+                }
             }
             catch (Exception ex)
             {

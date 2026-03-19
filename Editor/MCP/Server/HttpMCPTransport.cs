@@ -37,6 +37,7 @@ namespace GameBooom.Editor.MCP.Server
             try
             {
                 _listener = new HttpListener();
+                _listener.Prefixes.Add($"http://127.0.0.1:{_port}/");
                 _listener.Prefixes.Add($"http://localhost:{_port}/");
                 _listener.Start();
 
@@ -45,7 +46,7 @@ namespace GameBooom.Editor.MCP.Server
 
                 _ = Task.Run(() => ListenLoopAsync(_cts.Token), _cts.Token);
 
-                Debug.Log($"[GameBooom MCP Server] HTTP transport started on http://localhost:{_port}/");
+                Debug.Log($"[GameBooom MCP Server] HTTP transport started on http://127.0.0.1:{_port}/");
                 return Task.FromResult(true);
             }
             catch (Exception ex)
@@ -105,9 +106,15 @@ namespace GameBooom.Editor.MCP.Server
             MCPRequest request = null;
             try
             {
+                if (context.Request.HttpMethod == "OPTIONS")
+                {
+                    await SendOptionsResponseAsync(context.Response);
+                    return;
+                }
+
                 if (context.Request.HttpMethod != "POST")
                 {
-                    await SendErrorResponseAsync(context.Response, null, -32600, "Invalid Request: Only POST method is supported");
+                    await SendMethodNotAllowedAsync(context.Response, "POST, OPTIONS");
                     return;
                 }
 
@@ -130,7 +137,15 @@ namespace GameBooom.Editor.MCP.Server
                         var completedTask = await Task.WhenAny(responseTask, Task.Delay(-1, linkedCts.Token));
                         if (completedTask == responseTask)
                         {
-                            await SendResponseAsync(context.Response, await responseTask);
+                            var response = await responseTask;
+                            if (response == null)
+                            {
+                                await SendAcceptedAsync(context.Response);
+                            }
+                            else
+                            {
+                                await SendResponseAsync(context.Response, response);
+                            }
                         }
                         else
                         {
@@ -215,6 +230,40 @@ namespace GameBooom.Editor.MCP.Server
             {
                 Debug.LogError($"[GameBooom MCP Server] Failed to send response: {ex.Message}");
             }
+        }
+
+        private Task SendOptionsResponseAsync(HttpListenerResponse response)
+        {
+            response.StatusCode = (int)HttpStatusCode.NoContent;
+            response.ContentLength64 = 0;
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+            response.OutputStream.Close();
+            return Task.CompletedTask;
+        }
+
+        private Task SendMethodNotAllowedAsync(HttpListenerResponse response, string allowHeader)
+        {
+            response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+            response.ContentLength64 = 0;
+            response.Headers.Add("Allow", allowHeader);
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+            response.OutputStream.Close();
+            return Task.CompletedTask;
+        }
+
+        private Task SendAcceptedAsync(HttpListenerResponse response)
+        {
+            response.StatusCode = (int)HttpStatusCode.Accepted;
+            response.ContentLength64 = 0;
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+            response.OutputStream.Close();
+            return Task.CompletedTask;
         }
 
         private async Task SendErrorResponseAsync(HttpListenerResponse response, object requestId, int code, string message)

@@ -3,9 +3,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using GameBooom.Editor.MCP;
 using GameBooom.Editor.Settings;
+using GameBooom.Editor.State;
 using GameBooom.Editor.Threading;
 using GameBooom.Editor.Tools;
+using UnityEditor;
 using UnityEngine;
 
 namespace GameBooom.Editor.MCP.Server
@@ -18,12 +21,14 @@ namespace GameBooom.Editor.MCP.Server
     {
         private readonly ISettingsController _settings;
         private readonly IEditorThreadHelper _threadHelper;
+        private readonly IStateController _stateController;
         private readonly FunctionInvokerController _invoker;
 
         private IMCPTransport _transport;
         private MCPRequestHandler _requestHandler;
         private bool _isRunning;
         private bool _disposed;
+        private bool _recoveryChecked;
 
         public bool IsRunning => _isRunning;
         public int Port { get; private set; }
@@ -32,15 +37,18 @@ namespace GameBooom.Editor.MCP.Server
         public MCPServerService(
             ISettingsController settings,
             IEditorThreadHelper threadHelper,
+            IStateController stateController,
             FunctionInvokerController invoker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _threadHelper = threadHelper ?? throw new ArgumentNullException(nameof(threadHelper));
+            _stateController = stateController ?? throw new ArgumentNullException(nameof(stateController));
             _invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
 
             Port = _settings.MCPServerPort;
             InteractionLog = new MCPInteractionLog();
             _settings.OnSettingsChanged += HandleSettingsChanged;
+            DomainReloadHandler.Register(_stateController);
         }
 
         public async Task<bool> StartAsync(CancellationToken ct = default)
@@ -64,7 +72,7 @@ namespace GameBooom.Editor.MCP.Server
 
                 _transport = new HttpMCPTransport(Port);
                 var toolExporter = new MCPToolExporter();
-                var executionBridge = new MCPExecutionBridge(_threadHelper, _settings, _invoker, InteractionLog);
+                var executionBridge = new MCPExecutionBridge(_threadHelper, _settings, _stateController, _invoker, InteractionLog);
                 _requestHandler = new MCPRequestHandler(toolExporter, executionBridge);
 
                 _transport.OnRequestReceived += HandleRequestReceived;
@@ -73,7 +81,8 @@ namespace GameBooom.Editor.MCP.Server
                 if (started)
                 {
                     _isRunning = true;
-                    Debug.Log($"[GameBooom] MCP Server started on http://localhost:{Port}/");
+                    Debug.Log($"[GameBooom] MCP Server started on http://127.0.0.1:{Port}/");
+                    CheckForInterruptedExecution();
                     return true;
                 }
 
@@ -156,6 +165,97 @@ namespace GameBooom.Editor.MCP.Server
             _disposed = true;
             _settings.OnSettingsChanged -= HandleSettingsChanged;
             _ = StopAsync();
+        }
+
+        private void CheckForInterruptedExecution()
+        {
+            if (_recoveryChecked)
+                return;
+
+            _recoveryChecked = true;
+
+            var interrupted = DomainReloadHandler.ConsumeInterruptedState();
+            if (interrupted == null)
+                return;
+
+            if (!DomainReloadHandler.CanAutoResume())
+            {
+                var summary = interrupted.GetDescription() +
+                              " Auto-recovery paused after too many consecutive recompilations. Retry the tool manually.";
+                PublishRecoverySummary(interrupted, summary, MCPToolCallStatus.Error);
+                DomainReloadHandler.ResetResumeCounter();
+                return;
+            }
+
+            DomainReloadHandler.RecordAutoResume();
+            WaitForCompilationThen(() =>
+            {
+                _stateController.ClearState();
+
+                var scriptResult = TempScriptRunner.ConsumeResult();
+                var summary = interrupted.GetDescription();
+                if (!string.IsNullOrEmpty(scriptResult))
+                {
+                    summary += "\nContinuation result:\n" + scriptResult;
+                }
+                else
+                {
+                    summary += " The MCP server recovered after reload. Re-run the tool if more work is needed.";
+                }
+
+                var status = IsErrorResult(scriptResult) || string.IsNullOrEmpty(scriptResult)
+                    ? MCPToolCallStatus.Error
+                    : MCPToolCallStatus.Success;
+
+                PublishRecoverySummary(interrupted, summary, status);
+            });
+        }
+
+        private void PublishRecoverySummary(
+            DomainReloadHandler.InterruptedState interrupted,
+            string summary,
+            MCPToolCallStatus status)
+        {
+            var toolName = interrupted.PendingFunction?.FunctionName;
+            if (string.IsNullOrEmpty(toolName))
+                toolName = "domain_reload";
+
+            DomainReloadHandler.StoreRecoveryInfo(toolName, status.ToString(), summary);
+            InteractionLog.Add(toolName, status, summary);
+
+            if (status == MCPToolCallStatus.Success)
+                Debug.Log($"[GameBooom MCP Server] Recovery completed for '{toolName}'. {summary}");
+            else
+                Debug.LogWarning($"[GameBooom MCP Server] Recovery detected for '{toolName}'. {summary}");
+        }
+
+        private static bool IsErrorResult(string scriptResult)
+        {
+            if (string.IsNullOrEmpty(scriptResult))
+                return false;
+
+            return scriptResult.StartsWith("Error:", StringComparison.OrdinalIgnoreCase) ||
+                   scriptResult.StartsWith("Compilation failed", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void WaitForCompilationThen(Action onReady)
+        {
+            if (!EditorApplication.isCompiling)
+            {
+                EditorApplication.delayCall += () => onReady();
+                return;
+            }
+
+            void CheckCompilation()
+            {
+                if (EditorApplication.isCompiling)
+                    return;
+
+                EditorApplication.update -= CheckCompilation;
+                EditorApplication.delayCall += () => onReady();
+            }
+
+            EditorApplication.update += CheckCompilation;
         }
     }
 }

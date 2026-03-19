@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using GameBooom.Editor.DI;
 using GameBooom.Editor.Services;
+using GameBooom.Editor.State;
 using UnityEditor;
 using UnityEngine;
 
@@ -75,12 +76,32 @@ namespace GameBooom.Editor.Tools.Builtins
             if (compilationService == null)
                 return "Error: Compilation service is unavailable";
 
+            if (compilationService.IsCompiling)
+                return "Currently compiling... Please wait and try again.";
+
             return compilationService.GetCompilationErrors(max_entries, include_warnings);
+        }
+
+        [Description("Get the latest domain reload recovery event, if any. Useful after Unity recompiles scripts and an MCP request gets interrupted.")]
+        [ReadOnlyTool]
+        public static string GetReloadRecoveryStatus(
+            [ToolParam("Consume and clear the stored recovery event after reading", Required = false)] bool consume = false)
+        {
+            var info = DomainReloadHandler.GetLastRecoveryInfo(consume);
+            if (info == null)
+                return "No reload recovery event recorded.";
+
+            return $"Recovery event:\n" +
+                   $"- Tool: {info.ToolName}\n" +
+                   $"- Status: {info.Status}\n" +
+                   $"- Time: {info.Timestamp:O}\n" +
+                   $"- Summary: {info.Summary}";
         }
 
         private static ICompilationService GetCompilationService()
         {
-            return RootScopeServices.Services?.GetService(typeof(ICompilationService)) as ICompilationService;
+            return RootScopeServices.Services?.GetService(typeof(ICompilationService)) as ICompilationService
+                   ?? CompilationService.Instance;
         }
     }
 }

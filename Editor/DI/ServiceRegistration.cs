@@ -2,6 +2,7 @@
 
 using GameBooom.Editor.MCP.Server;
 using GameBooom.Editor.Services;
+using GameBooom.Editor.Services.UnityLogs;
 using GameBooom.Editor.Settings;
 using GameBooom.Editor.State;
 using GameBooom.Editor.Threading;
@@ -21,6 +22,7 @@ namespace GameBooom.Editor.DI
 
             // Services (Singletons)
             services.AddSingleton<ICompilationService, CompilationService>();
+            services.AddSingleton<UnityLogsRepository, UnityLogsRepository>();
             services.AddSingleton<FunctionInvokerController, FunctionInvokerController>();
 
             // MCP Server (Singleton)

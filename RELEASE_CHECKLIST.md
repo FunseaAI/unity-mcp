@@ -16,7 +16,7 @@ Use this checklist before publishing a new open-source release of GameBooom MCP 
 - [ ] Install the package from the Git URL
 - [ ] Open `GameBooom > MCP Server`
 - [ ] Start the MCP server successfully
-- [ ] Confirm the default endpoint is reachable at `http://localhost:8765/`
+- [ ] Confirm the default endpoint is reachable at `http://127.0.0.1:8765/`
 - [ ] Run a read-only tool such as `get_scene_info`
 - [ ] Run a scene-changing tool such as `create_game_object`
 - [ ] Verify interaction logs appear in the MCP Server window

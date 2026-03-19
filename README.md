@@ -35,7 +35,7 @@ Describe your game in one sentence — your AI assistant builds it in Unity thro
 ## Before You Start
 
 - This package is **Editor-only**. It does not add runtime components to your built game.
-- The MCP server listens on `http://localhost:8765/` by default.
+- The MCP server listens on `http://127.0.0.1:8765/` by default.
 - Read-only tools work immediately. If scene-changing tools return an approval error, re-enable auto-approve in your GameBooom settings.
 
 ## Quick Start
@@ -61,7 +61,7 @@ openupm add com.gamebooom.unity.mcp
 
 **Menu: GameBooom → MCP Server** to start the server.
 
-The server runs on `http://localhost:8765/` by default.
+The server runs on `http://127.0.0.1:8765/` by default.
 
 ### 3. Configure Your AI Client
 
@@ -73,7 +73,7 @@ The server runs on `http://localhost:8765/` by default.
   "mcpServers": {
     "gamebooom": {
       "type": "http",
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -88,7 +88,7 @@ The server runs on `http://localhost:8765/` by default.
 {
   "mcpServers": {
     "gamebooom": {
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -104,7 +104,7 @@ The server runs on `http://localhost:8765/` by default.
   "servers": {
     "gamebooom": {
       "type": "http",
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -119,7 +119,7 @@ The server runs on `http://localhost:8765/` by default.
 {
   "mcpServers": {
     "gamebooom": {
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -135,7 +135,7 @@ The server runs on `http://localhost:8765/` by default.
   "mcpServers": {
     "gamebooom": {
       "type": "http",
-      "url": "http://localhost:8765/"
+      "url": "http://127.0.0.1:8765/"
     }
   }
 }
@@ -148,7 +148,7 @@ The server runs on `http://localhost:8765/` by default.
 
 ```toml
 [mcp_servers.gamebooom]
-url = "http://localhost:8765/"
+url = "http://127.0.0.1:8765/"
 ```
 
 </details>

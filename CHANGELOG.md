@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.1] - 2026-03-19
+
+### Added
+- Minimal MCP resources support with `resources/list`, `resources/read`, and project/scene resource endpoints
+- Reload recovery reporting via `get_reload_recovery_status`
+- Cached Unity console log access via `get_console_logs`
+
+### Changed
+- Bind and document the default local MCP endpoint as `http://127.0.0.1:8765/` for better Codex compatibility
+- Auto-start the MCP server on editor load when it is enabled in settings
+- Improve compilation tracking and persist interrupted tool execution across domain reloads
+
 ## [0.1.0] - 2026-03-12
 
 ### Added
