@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.2] - 2026-03-30
+
+### Added
+- MCP prompts support with `prompts/list` and `prompts/get`
+- Rich MCP resources with project context, scene/selection/error summaries, interaction history, and resource templates
+- `execute_code` as the primary high-flexibility orchestration tool
+- Input simulation tools for key press, key combo, mouse click, and mouse drag workflows
+- Lightweight editor context builder and package version resolver for richer MCP context output
+
+### Changed
+- Default MCP tool exposure now uses a `core` profile to reduce tool-list noise, with optional `full` exposure in the MCP Server window
+- Tools exposed by the open-source build now execute directly without an extra approval toggle
+- Play Mode MCP requests no longer stall on the editor thread dispatch path
+- MCP server info now reports the package version dynamically instead of a hard-coded version
+
 ## [0.1.1] - 2026-03-19
 
 ### Added

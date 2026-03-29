@@ -2,7 +2,8 @@
     "name": "GameBooom.Editor",
     "rootNamespace": "GameBooom.Editor",
     "references": [
-        "Unity.Newtonsoft.Json"
+        "Unity.Newtonsoft.Json",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

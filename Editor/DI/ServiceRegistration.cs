@@ -17,6 +17,7 @@ namespace GameBooom.Editor.DI
             // Core Infrastructure (Singletons)
             services.AddSingleton<IApplicationPaths, ApplicationPaths>();
             services.AddSingleton<IEditorStateService, EditorStateService>();
+            services.AddSingleton<IEditorContextBuilder, EditorContextBuilder>();
             services.AddSingleton<ISettingsController, SettingsController>();
             services.AddSingleton<IEditorThreadHelper, EditorThreadHelper>();
 

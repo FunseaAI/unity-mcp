@@ -11,7 +11,7 @@ namespace GameBooom.Editor.Tools
     /// <summary>
     /// Scans assemblies for classes marked with [ToolProvider]
     /// and discovers all public static methods as tool functions.
-    /// Blocked tools (e.g. code execution, input simulation) are filtered out.
+        /// Blocked tools (e.g. hidden evaluation helpers, input simulation) are filtered out.
     /// Also supports manual tool registration for external plugins.
     /// </summary>
     internal static class ToolRegistry
@@ -35,9 +35,7 @@ namespace GameBooom.Editor.Tools
 
         private static readonly HashSet<string> BlockedTools = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "execute_code", "evaluate_expression",
-            "simulate_key_press", "simulate_mouse_click",
-            "simulate_key_combo", "simulate_mouse_drag"
+            "evaluate_expression",
         };
 
         /// <summary>

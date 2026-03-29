@@ -1,7 +1,9 @@
 // Copyright (C) GameBooom. Licensed under GPLv3.
 
+using System;
 using System.Collections.Generic;
 using GameBooom.Editor.Tools;
+using GameBooom.Editor.Settings;
 using UnityEngine;
 
 namespace GameBooom.Editor.MCP.Server
@@ -11,19 +13,40 @@ namespace GameBooom.Editor.MCP.Server
     /// </summary>
     internal class MCPToolExporter
     {
+        private readonly ISettingsController _settings;
+
+        public MCPToolExporter(ISettingsController settings)
+        {
+            _settings = settings;
+        }
+
         public List<Dictionary<string, object>> ExportTools()
         {
             var mcpTools = new List<Dictionary<string, object>>();
             var tools = ToolSchemaBuilder.BuildAll();
+            var profile = MCPToolExportPolicy.Parse(_settings?.MCPToolExportProfile);
 
-            Debug.Log($"[GameBooom MCP Server] Exporting {tools.Count} tools");
+            tools.Sort((left, right) =>
+            {
+                var leftRank = MCPToolExportPolicy.GetSortRank(left.function.name, profile);
+                var rightRank = MCPToolExportPolicy.GetSortRank(right.function.name, profile);
+                var compareRank = leftRank.CompareTo(rightRank);
+                return compareRank != 0
+                    ? compareRank
+                    : string.Compare(left.function.name, right.function.name, StringComparison.OrdinalIgnoreCase);
+            });
+
+            Debug.Log($"[GameBooom MCP Server] Exporting tools with profile '{MCPToolExportPolicy.ToSettingValue(profile)}'");
 
             foreach (var tool in tools)
             {
+                if (!MCPToolExportPolicy.IsToolAllowed(tool.function.name, profile))
+                    continue;
+
                 var mcpTool = new Dictionary<string, object>
                 {
                     ["name"] = tool.function.name,
-                    ["description"] = tool.function.description,
+                    ["description"] = MCPToolExportPolicy.BuildDescriptionPrefix(tool.function.name, profile) + tool.function.description,
                     ["inputSchema"] = ConvertParametersToJsonSchema(tool.function.parameters)
                 };
                 mcpTools.Add(mcpTool);

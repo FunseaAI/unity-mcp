@@ -110,6 +110,22 @@ namespace GameBooom.Editor.MCP.Server
             portField.style.marginBottom = 10;
             _mainContainer.Add(portField);
 
+            var toolProfileChoices = new List<string> { "core", "full" };
+            var toolProfileField = new PopupField<string>("Tool Exposure", toolProfileChoices,
+                Mathf.Max(0, toolProfileChoices.IndexOf(_settingsController.MCPToolExportProfile ?? "core")));
+            toolProfileField.RegisterValueChangedCallback(evt =>
+            {
+                _settingsController.MCPToolExportProfile = evt.newValue;
+            });
+            toolProfileField.style.marginBottom = 4;
+            _mainContainer.Add(toolProfileField);
+
+            var toolProfileHint = new Label("core reduces tool-list noise for AI clients. full exposes every tool.");
+            toolProfileHint.style.fontSize = 10;
+            toolProfileHint.style.color = new Color(0.65f, 0.65f, 0.65f);
+            toolProfileHint.style.marginBottom = 10;
+            _mainContainer.Add(toolProfileHint);
+
             // One-Click Config Section
             var configLabel = new Label("One-Click MCP Configuration");
             configLabel.style.fontSize = 12;
@@ -350,7 +366,7 @@ namespace GameBooom.Editor.MCP.Server
             if (_statusLabel == null) return;
             if (_mcpServer?.IsRunning == true)
             {
-                _statusLabel.text = $"Running on http://127.0.0.1:{_mcpServer.Port}/";
+                _statusLabel.text = $"Running on http://127.0.0.1:{_mcpServer.Port}/ ({_settingsController.MCPToolExportProfile ?? "core"})";
                 _statusLabel.style.color = new Color(0.4f, 1f, 0.4f);
             }
             else

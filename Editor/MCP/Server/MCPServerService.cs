@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using GameBooom.Editor.MCP;
+using GameBooom.Editor.Services;
 using GameBooom.Editor.Settings;
 using GameBooom.Editor.State;
 using GameBooom.Editor.Threading;
@@ -22,13 +23,17 @@ namespace GameBooom.Editor.MCP.Server
         private readonly ISettingsController _settings;
         private readonly IEditorThreadHelper _threadHelper;
         private readonly IStateController _stateController;
+        private readonly IEditorContextBuilder _contextBuilder;
+        private readonly IApplicationPaths _applicationPaths;
         private readonly FunctionInvokerController _invoker;
 
         private IMCPTransport _transport;
         private MCPRequestHandler _requestHandler;
+        private MCPResourceProvider _resourceProvider;
         private bool _isRunning;
         private bool _disposed;
         private bool _recoveryChecked;
+        private string _toolExportProfileSetting;
 
         public bool IsRunning => _isRunning;
         public int Port { get; private set; }
@@ -38,14 +43,19 @@ namespace GameBooom.Editor.MCP.Server
             ISettingsController settings,
             IEditorThreadHelper threadHelper,
             IStateController stateController,
+            IEditorContextBuilder contextBuilder,
+            IApplicationPaths applicationPaths,
             FunctionInvokerController invoker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _threadHelper = threadHelper ?? throw new ArgumentNullException(nameof(threadHelper));
             _stateController = stateController ?? throw new ArgumentNullException(nameof(stateController));
+            _contextBuilder = contextBuilder;
+            _applicationPaths = applicationPaths ?? throw new ArgumentNullException(nameof(applicationPaths));
             _invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
 
             Port = _settings.MCPServerPort;
+            _toolExportProfileSetting = _settings.MCPToolExportProfile;
             InteractionLog = new MCPInteractionLog();
             _settings.OnSettingsChanged += HandleSettingsChanged;
             DomainReloadHandler.Register(_stateController);
@@ -68,12 +78,21 @@ namespace GameBooom.Editor.MCP.Server
             try
             {
                 Port = _settings.MCPServerPort;
+                _toolExportProfileSetting = _settings.MCPToolExportProfile;
                 Debug.Log("[GameBooom MCP Server] Starting server...");
 
                 _transport = new HttpMCPTransport(Port);
-                var toolExporter = new MCPToolExporter();
+                var toolExporter = new MCPToolExporter(_settings);
                 var executionBridge = new MCPExecutionBridge(_threadHelper, _settings, _stateController, _invoker, InteractionLog);
-                _requestHandler = new MCPRequestHandler(toolExporter, executionBridge);
+                _resourceProvider = new MCPResourceProvider(_contextBuilder, _applicationPaths, InteractionLog);
+                var promptProvider = new MCPPromptProvider(Application.productName, _applicationPaths.ProjectPath);
+                _requestHandler = new MCPRequestHandler(
+                    toolExporter,
+                    executionBridge,
+                    _resourceProvider,
+                    promptProvider,
+                    "GameBooom MCP Server - " + Application.productName,
+                    PackageVersionUtility.CurrentVersion);
 
                 _transport.OnRequestReceived += HandleRequestReceived;
 
@@ -113,6 +132,8 @@ namespace GameBooom.Editor.MCP.Server
                 }
 
                 _requestHandler = null;
+                _resourceProvider?.Dispose();
+                _resourceProvider = null;
                 _isRunning = false;
                 Debug.Log("[GameBooom] MCP Server stopped");
             }
@@ -145,10 +166,14 @@ namespace GameBooom.Editor.MCP.Server
         {
             if (_disposed) return;
 
-            if (_settings.MCPServerPort != Port && _isRunning)
+            var portChanged = _settings.MCPServerPort != Port;
+            var profileChanged = !string.Equals(_settings.MCPToolExportProfile, _toolExportProfileSetting, StringComparison.Ordinal);
+
+            if ((portChanged || profileChanged) && _isRunning)
             {
-                Debug.Log($"[GameBooom MCP Server] Port changed from {Port} to {_settings.MCPServerPort}, restarting...");
+                Debug.Log("[GameBooom MCP Server] Server settings changed, restarting MCP transport...");
                 Port = _settings.MCPServerPort;
+                _toolExportProfileSetting = _settings.MCPToolExportProfile;
 
                 _ = Task.Run(async () =>
                 {

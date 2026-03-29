@@ -64,17 +64,14 @@ namespace GameBooom.Editor.MCP.Server
                         return $"Error: Unknown tool '{toolName}'";
                     }
 
+                    var profile = MCPToolExportPolicy.Parse(_settings.MCPToolExportProfile);
+                    if (!MCPToolExportPolicy.IsToolAllowed(toolName, profile))
+                    {
+                        return $"Error: Tool '{toolName}' is not exposed by the current MCP tool profile '{MCPToolExportPolicy.ToSettingValue(profile)}'.";
+                    }
+
                     functionCall.IsReadOnly = method != null &&
                         method.GetCustomAttribute<ReadOnlyToolAttribute>() != null;
-
-                    bool needsApproval = !functionCall.IsReadOnly && !_settings.AutoApproveFunctions;
-                    if (needsApproval)
-                    {
-                        var approvalError = $"Error: Tool '{toolName}' requires user approval. Please enable auto-approve in GameBooom settings.";
-                        Debug.LogWarning($"[GameBooom MCP Server] Tool '{toolName}' requires approval but auto-approval is disabled");
-                        _interactionLog?.Add(toolName, MCPToolCallStatus.Error, approvalError);
-                        return approvalError;
-                    }
 
                     DomainReloadHandler.ResetResumeCounter();
                     _stateController.SetState(GameBooomState.ExecutingFunction);

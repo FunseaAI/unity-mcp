@@ -11,26 +11,6 @@ namespace GameBooom.Editor.Settings
 
         public event Action OnSettingsChanged;
 
-        public bool AutoApproveFunctions
-        {
-            get => EditorPrefs.GetBool(Prefix + "AutoApprove", true);
-            set
-            {
-                EditorPrefs.SetBool(Prefix + "AutoApprove", value);
-                OnSettingsChanged?.Invoke();
-            }
-        }
-
-        public int AutoApproveLimit
-        {
-            get => EditorPrefs.GetInt(Prefix + "AutoApproveLimit", 10);
-            set
-            {
-                EditorPrefs.SetInt(Prefix + "AutoApproveLimit", value);
-                OnSettingsChanged?.Invoke();
-            }
-        }
-
         public bool MCPServerEnabled
         {
             get => EditorPrefs.GetBool(Prefix + "MCPServerEnabled", false);
@@ -47,6 +27,16 @@ namespace GameBooom.Editor.Settings
             set
             {
                 EditorPrefs.SetInt(Prefix + "MCPServerPort", value);
+                OnSettingsChanged?.Invoke();
+            }
+        }
+
+        public string MCPToolExportProfile
+        {
+            get => EditorPrefs.GetString(Prefix + "MCPToolExportProfile", "core");
+            set
+            {
+                EditorPrefs.SetString(Prefix + "MCPToolExportProfile", string.IsNullOrWhiteSpace(value) ? "core" : value);
                 OnSettingsChanged?.Invoke();
             }
         }

@@ -28,6 +28,7 @@ GameBooom MCP For Unity 是一个开源的 Unity 编辑器插件，作为 MCP (M
 
 - **60+ 内置工具** — 场景操作、脚本生成、资产管理、运行模式控制、可视化反馈等，覆盖 15 个模块
 - **MCP Server** — HTTP JSON-RPC 2.0 传输，兼容任意 MCP 客户端
+- **Resources 与 Prompts** — 暴露实时项目上下文、场景/选择/错误资源，以及常见 Unity 工作流的可复用 MCP Prompt
 - **MCP Client** — 连接外部 MCP 服务器扩展能力
 - **反射式工具发现** — 添加自定义工具只需标注 Attribute，无需注册代码
 - **厂商无关** — 兼容任意支持 MCP 的 AI 客户端：Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等
@@ -36,7 +37,8 @@ GameBooom MCP For Unity 是一个开源的 Unity 编辑器插件，作为 MCP (M
 
 - 这是一个 **仅限 Editor** 的包，不会向最终构建产物添加运行时代码。
 - MCP Server 默认监听 `http://127.0.0.1:8765/`。
-- 只读工具可以直接调用；如果改场景工具返回 approval 错误，请在 GameBooom 设置里重新开启 auto-approve。
+- 开源版现在默认使用 `core` MCP 工具暴露配置，减少 AI 客户端的工具噪音；`core` 以 `execute_code` 为主，只保留少量上下文、输入模拟和验证工具。如果你需要完整工具集，可在 MCP Server 窗口切换到 `full`。
+- 开源版中所有已暴露的 MCP 工具都会直接执行，不再提供额外的 approval 开关。
 
 ## 快速开始
 
@@ -191,7 +193,7 @@ GameBooom MCP For Unity 提供 **60+ 工具函数**，覆盖 15 个模块：
 | **相机** | `get_camera_properties`, `set_camera_projection`, `set_camera_settings`, `set_camera_culling_mask` |
 | **截图** | `capture_game_view`, `capture_scene_view` |
 | **包管理** | `install_package`, `remove_package`, `list_packages` |
-| **编译** | `wait_for_compilation`, `request_recompile` |
+| **编译** | `wait_for_compilation`, `request_recompile`, `get_compilation_errors`, `get_reload_recovery_status` |
 | **可视化反馈** | `select_object`, `focus_on_object`, `ping_asset`, `log_message`, `show_dialog`, `get_console_logs` |
 
 ## 添加自定义工具

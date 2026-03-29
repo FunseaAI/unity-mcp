@@ -32,7 +32,7 @@ namespace GameBooom.Editor.Threading
 
         public Task ExecuteOnEditorThreadAsync(Action action)
         {
-            if (IsMainThread && !_editorStateService.IsPlayingOrWillChangePlaymode)
+            if (IsMainThread)
             {
                 try
                 {
@@ -52,7 +52,7 @@ namespace GameBooom.Editor.Threading
 
         public Task<T> ExecuteOnEditorThreadAsync<T>(Func<T> func)
         {
-            if (IsMainThread && !_editorStateService.IsPlayingOrWillChangePlaymode)
+            if (IsMainThread)
             {
                 try
                 {
@@ -76,7 +76,7 @@ namespace GameBooom.Editor.Threading
 
         public Task<T> ExecuteAsyncOnEditorThreadAsync<T>(Func<Task<T>> asyncFunc)
         {
-            if (IsMainThread && !_editorStateService.IsPlayingOrWillChangePlaymode)
+            if (IsMainThread)
             {
                 return asyncFunc();
             }

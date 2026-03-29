@@ -28,6 +28,7 @@ Describe your game in one sentence — your AI assistant builds it in Unity thro
 
 - **60+ Built-in Tools** — Scene manipulation, script generation, asset management, play mode control, visual feedback, and more across 15 modules
 - **MCP Server** — HTTP JSON-RPC 2.0 transport, works with any MCP-compatible AI client
+- **Resources & Prompts** — Exposes live project context, scene/selection/error resources, plus reusable MCP prompts for common Unity workflows
 - **MCP Client** — Connect to external MCP servers for extended capabilities
 - **Reflection-Based Tool Discovery** — Add custom tools by simply annotating your classes, no registration code needed
 - **Vendor Agnostic** — Works with any AI client that supports MCP: Claude Code, Cursor, Windsurf, Codex, VS Code Copilot, etc.
@@ -36,7 +37,8 @@ Describe your game in one sentence — your AI assistant builds it in Unity thro
 
 - This package is **Editor-only**. It does not add runtime components to your built game.
 - The MCP server listens on `http://127.0.0.1:8765/` by default.
-- Read-only tools work immediately. If scene-changing tools return an approval error, re-enable auto-approve in your GameBooom settings.
+- The open-source build now defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` is centered on `execute_code` plus a small set of context, input simulation, and verification tools. Switch to `full` in the MCP Server window if you want every tool exposed.
+- All exposed MCP tools run directly in the open-source build. There is no extra approval toggle.
 
 ## Quick Start
 
@@ -191,7 +193,7 @@ GameBooom MCP For Unity ships with **60+ tool functions** across 15 modules:
 | **Camera** | `get_camera_properties`, `set_camera_projection`, `set_camera_settings`, `set_camera_culling_mask` |
 | **Screenshot** | `capture_game_view`, `capture_scene_view` |
 | **Packages** | `install_package`, `remove_package`, `list_packages` |
-| **Compilation** | `wait_for_compilation`, `request_recompile` |
+| **Compilation** | `wait_for_compilation`, `request_recompile`, `get_compilation_errors`, `get_reload_recovery_status` |
 | **Visual Feedback** | `select_object`, `focus_on_object`, `ping_asset`, `log_message`, `show_dialog`, `get_console_logs` |
 
 ## Adding Custom Tools
