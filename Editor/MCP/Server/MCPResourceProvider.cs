@@ -27,10 +27,11 @@ namespace GameBooom.Editor.MCP.Server
         private readonly object _lock = new object();
         private readonly string _projectName;
 
-        private DateTime _lastSnapshotTime = DateTime.MinValue;
-        private Dictionary<string, string> _cachedResources = new Dictionary<string, string>();
-        private Dictionary<string, string> _sceneObjectSummaries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        private Dictionary<string, string> _componentSummaries = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private string _cachedProjectSummary;
+        private string _cachedProjectContext;
+        private DateTime _projectSummaryCachedAt = DateTime.MinValue;
+        private DateTime _projectContextCachedAt = DateTime.MinValue;
+        private bool _projectSummaryDirty = true;
         private bool _disposed;
 
         public MCPResourceProvider(
@@ -42,15 +43,11 @@ namespace GameBooom.Editor.MCP.Server
             _applicationPaths = applicationPaths;
             _interactionLog = interactionLog;
             _projectName = Application.productName;
-
-            EditorApplication.update += RefreshCacheOnMainThread;
-            RefreshCacheOnMainThread();
+            EditorApplication.projectChanged += MarkProjectSummaryDirty;
         }
 
         public List<Dictionary<string, object>> ListResources()
         {
-            RefreshCache();
-
             return new List<Dictionary<string, object>>
             {
                 CreateResource("unity://project/context", $"{_projectName} Project Context", "Live Unity project context summary."),
@@ -76,7 +73,6 @@ namespace GameBooom.Editor.MCP.Server
 
         public Dictionary<string, object> ReadResource(string uri)
         {
-            RefreshCache();
             var text = ResolveResourceText(uri);
 
             return new Dictionary<string, object>
@@ -99,7 +95,7 @@ namespace GameBooom.Editor.MCP.Server
                 return;
 
             _disposed = true;
-            EditorApplication.update -= RefreshCacheOnMainThread;
+            EditorApplication.projectChanged -= MarkProjectSummaryDirty;
         }
 
         private string ResolveResourceText(string uri)
@@ -107,22 +103,29 @@ namespace GameBooom.Editor.MCP.Server
             if (string.IsNullOrWhiteSpace(uri))
                 return "Resource URI is required.";
 
-            lock (_lock)
+            switch (uri)
             {
-                if (_cachedResources.TryGetValue(uri, out var cached))
-                    return cached;
+                case "unity://project/context":
+                    return GetProjectContextCached();
+                case "unity://project/summary":
+                    return GetProjectSummaryCached();
+                case "unity://scene/active":
+                case "unity://scene/current":
+                    return _contextBuilder != null ? _contextBuilder.GetActiveSceneSummary() : "Context builder unavailable.";
+                case "unity://selection/current":
+                    return _contextBuilder != null ? _contextBuilder.GetSelectionSummary() : "Context builder unavailable.";
+                case "unity://errors/compilation":
+                    return _contextBuilder != null ? _contextBuilder.GetCompileErrorContext(5, 3) : "Context builder unavailable.";
+                case "unity://errors/console":
+                    return _contextBuilder != null ? _contextBuilder.GetConsoleErrorSummary(8) : "Context builder unavailable.";
+                case "unity://mcp/interactions":
+                    return BuildInteractionSummary();
             }
 
             if (uri.StartsWith("unity://scene/object/", StringComparison.OrdinalIgnoreCase))
             {
                 var name = Uri.UnescapeDataString(uri.Substring("unity://scene/object/".Length));
-                lock (_lock)
-                {
-                    if (_sceneObjectSummaries.TryGetValue(name, out var summary))
-                        return summary;
-                }
-
-                return "Scene object not found in cached snapshot: " + name;
+                return BuildSceneObjectSummary(name) ?? "Scene object not found: " + name;
             }
 
             if (uri.StartsWith("unity://asset/path/", StringComparison.OrdinalIgnoreCase))
@@ -140,15 +143,8 @@ namespace GameBooom.Editor.MCP.Server
 
                 var gameObjectName = Uri.UnescapeDataString(split[0]);
                 var componentType = Uri.UnescapeDataString(split[1]);
-                var key = BuildComponentKey(gameObjectName, componentType);
-
-                lock (_lock)
-                {
-                    if (_componentSummaries.TryGetValue(key, out var summary))
-                        return summary;
-                }
-
-                return "Component not found in cached snapshot: " + gameObjectName + " / " + componentType;
+                return BuildComponentSummary(gameObjectName, componentType) ??
+                       "Component not found: " + gameObjectName + " / " + componentType;
             }
 
             return "Resource not found: " + uri;
@@ -173,56 +169,51 @@ namespace GameBooom.Editor.MCP.Server
             return $"[{assetPath}]\n{content}";
         }
 
-        private void RefreshCache()
+        private void MarkProjectSummaryDirty()
         {
             lock (_lock)
             {
-                var now = DateTime.UtcNow;
-                if ((now - _lastSnapshotTime).TotalSeconds < 1.0d && _cachedResources.Count > 0)
-                    return;
+                _projectSummaryDirty = true;
             }
         }
 
-        private void RefreshCacheOnMainThread()
+        private string GetProjectContextCached()
         {
-            if (_disposed)
-                return;
-
             var now = DateTime.UtcNow;
             lock (_lock)
             {
-                if ((now - _lastSnapshotTime).TotalSeconds < 1.0d && _cachedResources.Count > 0)
-                    return;
+                if (!string.IsNullOrEmpty(_cachedProjectContext) &&
+                    (now - _projectContextCachedAt).TotalSeconds < 1.0d)
+                {
+                    return _cachedProjectContext;
+                }
 
-                _lastSnapshotTime = now;
-            }
-
-            var sceneSummary = _contextBuilder != null ? _contextBuilder.GetActiveSceneSummary() : "Context builder unavailable.";
-            var projectSummary = BuildProjectSummary();
-            var resources = new Dictionary<string, string>
-            {
-                ["unity://project/context"] = BuildProjectContext(sceneSummary),
-                ["unity://project/summary"] = projectSummary,
-                ["unity://scene/active"] = sceneSummary,
-                ["unity://scene/current"] = sceneSummary,
-                ["unity://selection/current"] = _contextBuilder != null ? _contextBuilder.GetSelectionSummary() : "Context builder unavailable.",
-                ["unity://errors/compilation"] = _contextBuilder != null ? _contextBuilder.GetCompileErrorContext(5, 3) : "Context builder unavailable.",
-                ["unity://errors/console"] = _contextBuilder != null ? _contextBuilder.GetConsoleErrorSummary(8) : "Context builder unavailable.",
-                ["unity://mcp/interactions"] = BuildInteractionSummary()
-            };
-
-            var sceneObjectSummaries = BuildSceneObjectSummaries();
-            var componentSummaries = BuildComponentSummaries();
-
-            lock (_lock)
-            {
-                _cachedResources = resources;
-                _sceneObjectSummaries = sceneObjectSummaries;
-                _componentSummaries = componentSummaries;
+                _cachedProjectContext = BuildProjectContext();
+                _projectContextCachedAt = now;
+                return _cachedProjectContext;
             }
         }
 
-        private string BuildProjectContext(string sceneSummary)
+        private string GetProjectSummaryCached()
+        {
+            var now = DateTime.UtcNow;
+            lock (_lock)
+            {
+                if (!_projectSummaryDirty &&
+                    !string.IsNullOrEmpty(_cachedProjectSummary) &&
+                    (now - _projectSummaryCachedAt).TotalSeconds < 10.0d)
+                {
+                    return _cachedProjectSummary;
+                }
+
+                _cachedProjectSummary = BuildProjectSummary();
+                _projectSummaryCachedAt = now;
+                _projectSummaryDirty = false;
+                return _cachedProjectSummary;
+            }
+        }
+
+        private string BuildProjectContext()
         {
             var sb = new StringBuilder();
             sb.AppendLine("GameBooom MCP Project Context");
@@ -236,7 +227,7 @@ namespace GameBooom.Editor.MCP.Server
             if (_contextBuilder != null)
                 sb.AppendLine(_contextBuilder.GetContextBlock());
             else
-                sb.AppendLine(sceneSummary);
+                sb.AppendLine("Context builder unavailable.");
 
             return sb.ToString().Trim();
         }
@@ -297,70 +288,63 @@ namespace GameBooom.Editor.MCP.Server
             return sb.ToString().Trim();
         }
 
-        private static Dictionary<string, string> BuildSceneObjectSummaries()
+        private static string BuildSceneObjectSummary(string objectName)
         {
-            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var scene = EditorSceneManager.GetActiveScene();
             if (!scene.IsValid())
-                return result;
+                return null;
 
             var roots = scene.GetRootGameObjects();
             for (int i = 0; i < roots.Length; i++)
-                CaptureSceneObjectRecursive(roots[i].transform, result);
-
-            return result;
-        }
-
-        private static void CaptureSceneObjectRecursive(Transform node, Dictionary<string, string> map)
-        {
-            if (!map.ContainsKey(node.name))
             {
-                var sb = new StringBuilder();
-                sb.AppendLine("GameObject: " + node.name);
-                sb.AppendLine("Path: " + GetHierarchyPath(node));
-                sb.AppendLine("Active: " + node.gameObject.activeInHierarchy);
-                sb.AppendLine("Position: " + node.position);
-                sb.AppendLine("Rotation: " + node.eulerAngles);
-                sb.AppendLine("Scale: " + node.localScale);
-                sb.AppendLine();
-                sb.AppendLine("Components: " + GetComponentSummary(node.gameObject));
-                map[node.name] = sb.ToString().Trim();
+                var match = FindTransformByName(roots[i].transform, objectName);
+                if (match != null)
+                    return BuildSceneObjectSummary(match);
             }
 
-            for (int i = 0; i < node.childCount; i++)
-                CaptureSceneObjectRecursive(node.GetChild(i), map);
+            return null;
         }
 
-        private static Dictionary<string, string> BuildComponentSummaries()
+        private static string BuildSceneObjectSummary(Transform node)
         {
-            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var sb = new StringBuilder();
+            sb.AppendLine("GameObject: " + node.name);
+            sb.AppendLine("Path: " + GetHierarchyPath(node));
+            sb.AppendLine("Active: " + node.gameObject.activeInHierarchy);
+            sb.AppendLine("Position: " + node.position);
+            sb.AppendLine("Rotation: " + node.eulerAngles);
+            sb.AppendLine("Scale: " + node.localScale);
+            sb.AppendLine();
+            sb.AppendLine("Components: " + GetComponentSummary(node.gameObject));
+            return sb.ToString().Trim();
+        }
+
+        private static string BuildComponentSummary(string gameObjectName, string componentType)
+        {
             var scene = EditorSceneManager.GetActiveScene();
             if (!scene.IsValid())
-                return result;
+                return null;
 
             var roots = scene.GetRootGameObjects();
             for (int i = 0; i < roots.Length; i++)
-                CaptureComponentSummariesRecursive(roots[i].transform, result);
-
-            return result;
-        }
-
-        private static void CaptureComponentSummariesRecursive(Transform node, Dictionary<string, string> map)
-        {
-            var components = node.GetComponents<Component>();
-            for (int i = 0; i < components.Length; i++)
             {
-                var component = components[i];
-                if (component == null)
+                var match = FindTransformByName(roots[i].transform, gameObjectName);
+                if (match == null)
                     continue;
 
-                var key = BuildComponentKey(node.name, component.GetType().Name);
-                if (!map.ContainsKey(key))
-                    map[key] = BuildComponentSummary(node.gameObject, component);
+                var components = match.GetComponents<Component>();
+                for (int j = 0; j < components.Length; j++)
+                {
+                    var component = components[j];
+                    if (component == null)
+                        continue;
+
+                    if (string.Equals(component.GetType().Name, componentType, StringComparison.OrdinalIgnoreCase))
+                        return BuildComponentSummary(match.gameObject, component);
+                }
             }
 
-            for (int i = 0; i < node.childCount; i++)
-                CaptureComponentSummariesRecursive(node.GetChild(i), map);
+            return null;
         }
 
         private static string BuildComponentSummary(GameObject gameObject, Component component)
@@ -461,9 +445,22 @@ namespace GameBooom.Editor.MCP.Server
             return names.Count > 0 ? string.Join(", ", names) : "(none)";
         }
 
-        private static string BuildComponentKey(string gameObjectName, string componentName)
+        private static Transform FindTransformByName(Transform current, string objectName)
         {
-            return gameObjectName + "|" + componentName;
+            if (current == null)
+                return null;
+
+            if (string.Equals(current.name, objectName, StringComparison.OrdinalIgnoreCase))
+                return current;
+
+            for (int i = 0; i < current.childCount; i++)
+            {
+                var match = FindTransformByName(current.GetChild(i), objectName);
+                if (match != null)
+                    return match;
+            }
+
+            return null;
         }
 
         private static Dictionary<string, object> CreateResource(string uri, string name, string description)
