@@ -18,7 +18,7 @@
 
 GameBooom MCP For Unity 是一个开源的 Unity 编辑器插件，作为 MCP (Model Context Protocol) 服务器运行，让 Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等 AI 助手直接与你的 Unity 编辑器交互。
 
-一句话描述你的游戏 — AI 助手通过 GameBooom MCP For Unity 的 60+ 内置工具自动创建场景、编写脚本、管理资产并完成编辑器自动化，把所有逻辑串联起来。
+一句话描述你的游戏 — AI 助手通过 GameBooom MCP For Unity 的 77 个内置工具自动创建场景、编写脚本、验证运行态、模拟输入并完成编辑器自动化，把所有逻辑串联起来。
 
 > *"做一个贪吃蛇游戏，10x10 网格，食物随机生成，计分 UI，游戏结束界面"*
 >
@@ -26,10 +26,11 @@ GameBooom MCP For Unity 是一个开源的 Unity 编辑器插件，作为 MCP (M
 
 ## 核心特性
 
-- **60+ 内置工具** — 场景操作、脚本生成、资产管理、运行模式控制、可视化反馈等，覆盖 15 个模块
-- **MCP Server** — HTTP JSON-RPC 2.0 传输，兼容任意 MCP 客户端
-- **Resources 与 Prompts** — 暴露实时项目上下文、场景/选择/错误资源，以及常见 Unity 工作流的可复用 MCP Prompt
-- **MCP Client** — 连接外部 MCP 服务器扩展能力
+- **77 个内置工具** — 覆盖场景编辑、脚本、资产、运行态控制、截图、Prompts 与编辑器自动化，共 18 个模块
+- **`execute_code` 主工具** — 适合复杂编辑器/运行态编排的高灵活度 C# 执行工具
+- **输入模拟 + 截图验证** — 在 Play Mode 中模拟键盘/鼠标，再用 Game View / Scene View 截图验证结果
+- **Resources 与 Prompts** — 暴露实时项目上下文、场景/选择/错误资源、资源模板，以及常见 Unity 工作流的可复用 MCP Prompt
+- **MCP Server + MCP Client** — 既能把 Unity 暴露给外部 AI 客户端，也能连接外部 MCP 服务扩展能力
 - **反射式工具发现** — 添加自定义工具只需标注 Attribute，无需注册代码
 - **厂商无关** — 兼容任意支持 MCP 的 AI 客户端：Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等
 
@@ -37,7 +38,7 @@ GameBooom MCP For Unity 是一个开源的 Unity 编辑器插件，作为 MCP (M
 
 - 这是一个 **仅限 Editor** 的包，不会向最终构建产物添加运行时代码。
 - MCP Server 默认监听 `http://127.0.0.1:8765/`。
-- 插件默认使用 `core` MCP 工具暴露配置，减少 AI 客户端的工具噪音；`core` 以 `execute_code` 为主，只保留少量上下文、输入模拟和验证工具。如果你需要完整工具集，可在 MCP Server 窗口切换到 `full`。
+- 插件默认使用 `core` MCP 工具暴露配置，减少 AI 客户端的工具噪音；`core` 当前暴露 17 个高频工具，以 `execute_code`、运行模式控制、输入模拟、截图、日志和编译检查为主。如果你需要完整工具集，可在 MCP Server 窗口切换到 `full`，暴露全部 77 个工具。
 - 所有已暴露的 MCP 工具都会直接执行，不再提供额外的 approval 开关。
 
 ## 快速开始
@@ -164,19 +165,32 @@ url = "http://127.0.0.1:8765/"
 
 ### 4. 验证连接
 
-先在 AI 客户端里试一个安全的只读请求：
+先在 AI 客户端里试几个安全请求：
 
 > “调用 `get_scene_info`，告诉我当前打开的是哪个场景。”
 
-如果这一步正常返回，说明客户端已经连接成功。
+> “读取 `unity://project/context`，总结当前编辑器状态。”
+
+> “调用 `execute_code`，返回当前激活场景名。”
+
+如果这些都正常返回，说明 MCP server、resources 和主执行工具都已经连通。
 
 ### 5. 开始构建
 
 打开你的 AI 客户端，试试：*"创建一个 3D 平台跳跃关卡，包含 5 个浮空平台"*
 
+## MCP 能力结构
+
+当前开源包有四层高价值能力：
+
+- **Tools** — `full` 下共 77 个工具，`core` 下 17 个高频工具
+- **Primary execution** — `execute_code` 用于复杂编辑器/运行态编排
+- **Prompts** — 包括 `fix_compile_errors`、`runtime_validation`、`create_playable_prototype` 等工作流 Prompt
+- **Resources** — 项目上下文、场景摘要、选择状态、编译错误、控制台错误、MCP 交互记录，以及按对象/组件/资源路径展开的模板资源
+
 ## 内置工具
 
-GameBooom MCP For Unity 提供 **60+ 工具函数**，覆盖 15 个模块：
+GameBooom MCP For Unity 当前提供 **77 个工具函数**，覆盖 18 个模块：
 
 | 分类 | 工具 |
 |------|------|
@@ -192,6 +206,8 @@ GameBooom MCP For Unity 提供 **60+ 工具函数**，覆盖 15 个模块：
 | **动画** | `create_animation_clip`, `create_animator_controller`, `assign_animator` |
 | **相机** | `get_camera_properties`, `set_camera_projection`, `set_camera_settings`, `set_camera_culling_mask` |
 | **截图** | `capture_game_view`, `capture_scene_view` |
+| **脚本执行** | `execute_code` |
+| **输入模拟** | `simulate_key_press`, `simulate_key_combo`, `simulate_mouse_click`, `simulate_mouse_drag` |
 | **包管理** | `install_package`, `remove_package`, `list_packages` |
 | **编译** | `wait_for_compilation`, `request_recompile`, `get_compilation_errors`, `get_reload_recovery_status` |
 | **可视化反馈** | `select_object`, `focus_on_object`, `ping_asset`, `log_message`, `show_dialog`, `get_console_logs` |
@@ -226,7 +242,7 @@ MCP Server (HTTP JSON-RPC 2.0)
     └─ MCPRequestHandler (协议处理)
         └─ MCPExecutionBridge
             └─ FunctionInvokerController (反射式调用)
-                └─ Tool Functions (60+ 内置工具，15 个模块)
+                └─ Tool Functions (77 个内置工具，18 个模块)
 ```
 
 ```

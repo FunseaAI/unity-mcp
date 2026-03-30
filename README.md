@@ -18,7 +18,7 @@
 
 GameBooom MCP For Unity is an open-source Unity Editor plugin that acts as an MCP (Model Context Protocol) server, allowing AI assistants like Claude Code, Cursor, Windsurf, Codex, and VS Code Copilot to interact directly with your Unity Editor.
 
-Describe your game in one sentence — your AI assistant builds it in Unity through GameBooom MCP For Unity's 60+ built-in tools for scene creation, script generation, asset management, and editor automation.
+Describe your game in one sentence — your AI assistant builds it in Unity through GameBooom MCP For Unity's 77 built-in tools for scene creation, script generation, runtime validation, input simulation, and editor automation.
 
 > *"Build a snake game with a 10x10 grid, food spawning, score UI, and game-over screen"*
 >
@@ -26,18 +26,19 @@ Describe your game in one sentence — your AI assistant builds it in Unity thro
 
 ## Highlights
 
-- **60+ Built-in Tools** — Scene manipulation, script generation, asset management, play mode control, visual feedback, and more across 15 modules
-- **MCP Server** — HTTP JSON-RPC 2.0 transport, works with any MCP-compatible AI client
-- **Resources & Prompts** — Exposes live project context, scene/selection/error resources, plus reusable MCP prompts for common Unity workflows
-- **MCP Client** — Connect to external MCP servers for extended capabilities
-- **Reflection-Based Tool Discovery** — Add custom tools by simply annotating your classes, no registration code needed
+- **77 Built-in Tools** — Scene editing, assets, scripts, play mode control, screenshots, prompts, and editor automation across 18 modules
+- **`execute_code` First Workflow** — A high-flexibility C# execution tool for rich editor/runtime orchestration when many small tools would be noisy
+- **Input Simulation + Screenshots** — Drive play mode with keyboard/mouse simulation and verify results with game/scene captures
+- **Resources & Prompts** — Exposes live project context, scene/selection/error resources, resource templates, and reusable MCP prompts
+- **MCP Server + MCP Client** — Expose Unity to external AI clients and connect Unity to external MCP servers when needed
+- **Reflection-Based Tool Discovery** — Add custom tools by annotating public static classes and methods
 - **Vendor Agnostic** — Works with any AI client that supports MCP: Claude Code, Cursor, Windsurf, Codex, VS Code Copilot, etc.
 
 ## Before You Start
 
 - This package is **Editor-only**. It does not add runtime components to your built game.
 - The MCP server listens on `http://127.0.0.1:8765/` by default.
-- The package defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` is centered on `execute_code` plus a small set of context, input simulation, and verification tools. Switch to `full` in the MCP Server window if you want every tool exposed.
+- The package defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` currently exposes 17 high-signal tools centered on `execute_code`, play mode control, input simulation, screenshots, logs, and compilation checks. Switch to `full` in the MCP Server window if you want all 77 tools exposed.
 - All exposed MCP tools run directly. There is no extra approval toggle.
 
 ## Quick Start
@@ -164,19 +165,30 @@ Use the same JSON structure as Cursor unless your local Windsurf version require
 
 ### 4. Verify the Connection
 
-Open your AI client and try a safe read-only request first:
+Open your AI client and try a few safe requests first:
 
-> "Call `get_scene_info` and tell me what scene is open."
+- "Call `get_scene_info` and tell me what scene is open."
+- "Read `unity://project/context` and summarize the current editor state."
+- "Use `execute_code` to return the active scene name."
 
-If that works, your client is connected correctly.
+If those work, the MCP server, resources, and primary execution tool are connected correctly.
 
 ### 5. Start Building
 
 Open your AI client and try: *"Create a 3D platformer level with 5 floating platforms"*
 
+## MCP Capabilities
+
+The current open-source package exposes four high-value capability layers:
+
+- **Tools** — 77 total tools in `full`, 17 focused tools in `core`
+- **Primary execution** — `execute_code` for rich editor/runtime orchestration
+- **Prompts** — workflow prompts like `fix_compile_errors`, `runtime_validation`, and `create_playable_prototype`
+- **Resources** — project context, scene summaries, selection state, compile errors, console errors, MCP interaction history, plus resource templates for scene objects, components, and asset paths
+
 ## Built-in Tools
 
-GameBooom MCP For Unity ships with **60+ tool functions** across 15 modules:
+GameBooom MCP For Unity currently ships with **77 tool functions** across 18 modules:
 
 | Category | Tools |
 |----------|-------|
@@ -192,6 +204,8 @@ GameBooom MCP For Unity ships with **60+ tool functions** across 15 modules:
 | **Animation** | `create_animation_clip`, `create_animator_controller`, `assign_animator` |
 | **Camera** | `get_camera_properties`, `set_camera_projection`, `set_camera_settings`, `set_camera_culling_mask` |
 | **Screenshot** | `capture_game_view`, `capture_scene_view` |
+| **Script Execution** | `execute_code` |
+| **Input Simulation** | `simulate_key_press`, `simulate_key_combo`, `simulate_mouse_click`, `simulate_mouse_drag` |
 | **Packages** | `install_package`, `remove_package`, `list_packages` |
 | **Compilation** | `wait_for_compilation`, `request_recompile`, `get_compilation_errors`, `get_reload_recovery_status` |
 | **Visual Feedback** | `select_object`, `focus_on_object`, `ping_asset`, `log_message`, `show_dialog`, `get_console_logs` |
@@ -226,7 +240,7 @@ MCP Server (HTTP JSON-RPC 2.0)
     └─ MCPRequestHandler (protocol handling)
         └─ MCPExecutionBridge
             └─ FunctionInvokerController (reflection-based invocation)
-                └─ Tool Functions (60+ built-in tools across 15 modules)
+                └─ Tool Functions (77 built-in tools across 18 modules)
 ```
 
 ```
