@@ -189,27 +189,6 @@ url = "http://127.0.0.1:8765/"
 
 打开你的 AI 客户端，试试：*"创建一个 3D 平台跳跃关卡，包含 5 个浮空平台"*
 
-## 面向 Registry 的发布形态
-
-包内置的 Unity MCP Server 是明显偏本地优先的，默认监听 `127.0.0.1`，因此它不能直接以“公网 remote server”的形式发布到官方 MCP Registry。
-
-为了给后续进入官方 Registry 留出发布路径，这个仓库现在额外提供了一个隐藏的 `.NET` stdio 桥接工具，位于 [`Tools~/GameBooom.Mcp.Proxy`](./Tools~/GameBooom.Mcp.Proxy)。它把 stdio MCP 请求转发到本地 Unity HTTP MCP 服务，从而让项目具备可发布到 NuGet、再以 `stdio` 形态进入 MCP Registry 的 runtime 包装。
-
-本地构建：
-
-```bash
-dotnet build Tools~/GameBooom.Mcp.Proxy/GameBooom.Mcp.Proxy.csproj
-dotnet pack Tools~/GameBooom.Mcp.Proxy/GameBooom.Mcp.Proxy.csproj -c Release
-```
-
-连接本地 Unity Editor MCP Server 运行：
-
-```bash
-dotnet run --project Tools~/GameBooom.Mcp.Proxy/GameBooom.Mcp.Proxy.csproj -- --url http://127.0.0.1:8765/
-```
-
-官方 Registry 发布说明与 `server.json` 模板见 [`Documentation~/registry-publishing.md`](./Documentation~/registry-publishing.md) 和 [`Registry~/server.json.template`](./Registry~/server.json.template)。
-
 ## 与 Coplay 的对比
 
 下表基于 Coplay 官方公开 GitHub README 所描述的能力与安装方式进行对比。

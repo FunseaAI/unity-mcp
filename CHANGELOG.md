@@ -1,11 +1,5 @@
 # Changelog
 
-## [Unreleased]
-
-### Added
-- Hidden `.NET` stdio proxy project under `Tools~/GameBooom.Mcp.Proxy` for packaging the local Unity HTTP MCP server as a publishable NuGet tool
-- `Registry~/server.json.template` and registry publishing notes for future MCP Registry submission
-
 ## [0.1.2] - 2026-03-30
 
 ### Added
