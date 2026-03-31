@@ -13,9 +13,14 @@ GameBooom MCP For Unity is an open-source MCP server for the Unity Editor.
 
 - 60+ built-in tool functions across scene, asset, script, prefab, UI, animation, camera, screenshot, package, and feedback workflows
 - HTTP JSON-RPC 2.0 MCP server compatible with Claude Code, Cursor, Windsurf, Codex, VS Code Copilot, and other MCP clients
+- Hidden stdio proxy packaging path for future NuGet and MCP Registry publication
 - Reflection-based tool discovery via `[ToolProvider]`
 - One-click local MCP config generation for supported clients
 - Domain reload recovery for the MCP server during Unity recompilation
+
+## Registry Publishing
+
+For future official MCP Registry publication, see [registry-publishing.md](./registry-publishing.md).
 
 ## Custom Tools
 

@@ -187,6 +187,27 @@ If those work, the MCP server, resources, and primary execution tool are connect
 
 Open your AI client and try: *"Create a 3D platformer level with 5 floating platforms"*
 
+## Registry-Ready Packaging Path
+
+The built-in Unity server is intentionally local-first and listens on `127.0.0.1`, which means it is not directly publishable to the official MCP Registry as a remote server.
+
+To make future registry publication possible, this repository now also includes a hidden `.NET` stdio bridge under [`Tools~/GameBooom.Mcp.Proxy`](./Tools~/GameBooom.Mcp.Proxy). It forwards stdio MCP traffic to the local Unity HTTP endpoint, which gives the project a package-shaped runtime that can be published to NuGet and then registered as a `stdio` MCP server.
+
+Build it locally with:
+
+```bash
+dotnet build Tools~/GameBooom.Mcp.Proxy/GameBooom.Mcp.Proxy.csproj
+dotnet pack Tools~/GameBooom.Mcp.Proxy/GameBooom.Mcp.Proxy.csproj -c Release
+```
+
+Run it against a local Unity Editor MCP server with:
+
+```bash
+dotnet run --project Tools~/GameBooom.Mcp.Proxy/GameBooom.Mcp.Proxy.csproj -- --url http://127.0.0.1:8765/
+```
+
+Registry publishing notes and a starter `server.json` live in [`Documentation~/registry-publishing.md`](./Documentation~/registry-publishing.md) and [`Registry~/server.json.template`](./Registry~/server.json.template).
+
 ## Comparison With Coplay
 
 The table below compares this repository with the publicly documented behavior of Coplay's open-source `unity-mcp` repository on GitHub.

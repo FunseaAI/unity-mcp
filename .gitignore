@@ -30,9 +30,17 @@
 .DS_Store
 Thumbs.db
 !Documentation~/
+!Registry~/
+!Registry~/server.json.template
 
 # Builds
 *.apk
 *.aab
 *.unitypackage
 *.app
+!Tools~/
+!Tools~/GameBooom.Mcp.Proxy/
+!Tools~/GameBooom.Mcp.Proxy/*.csproj
+Tools~/GameBooom.Mcp.Proxy/bin/
+Tools~/GameBooom.Mcp.Proxy/obj/
+Tools~/GameBooom.Mcp.Proxy/nupkg/
