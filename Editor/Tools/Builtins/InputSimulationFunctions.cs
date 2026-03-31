@@ -129,12 +129,11 @@ namespace GameBooom.Editor.Tools.Builtins
                 var pressButton = GetMouseButton(mouse, button);
 
                 InputState.Change(mouse.position, new Vector2(start_x, start_y));
-                using (StateEvent.From(mouse, out var pressEvent))
+                QueueStateEvent(mouse, pressEvent =>
                 {
                     mouse.position.WriteValueIntoEvent(new Vector2(start_x, start_y), pressEvent);
                     pressButton.WriteValueIntoEvent(1f, pressEvent);
-                    InputSystem.QueueEvent(pressEvent);
-                }
+                });
 
                 int steps = Mathf.Max(5, Mathf.RoundToInt(duration * 30));
                 for (int i = 1; i < steps; i++)
@@ -143,19 +142,17 @@ namespace GameBooom.Editor.Tools.Builtins
                     float curX = Mathf.Lerp(start_x, end_x, t);
                     float curY = Mathf.Lerp(start_y, end_y, t);
 
-                    using (StateEvent.From(mouse, out var moveEvent))
+                    QueueStateEvent(mouse, moveEvent =>
                     {
                         mouse.position.WriteValueIntoEvent(new Vector2(curX, curY), moveEvent);
                         pressButton.WriteValueIntoEvent(1f, moveEvent);
-                        InputSystem.QueueEvent(moveEvent);
-                    }
+                    });
                 }
 
-                using (StateEvent.From(mouse, out var releaseEvent))
+                QueueStateEvent(mouse, releaseEvent =>
                 {
                     mouse.position.WriteValueIntoEvent(new Vector2(end_x, end_y), releaseEvent);
-                    InputSystem.QueueEvent(releaseEvent);
-                }
+                });
 
                 return $"Mouse drag from ({start_x},{start_y}) to ({end_x},{end_y}) ({steps} steps queued)";
             }
@@ -208,11 +205,26 @@ namespace GameBooom.Editor.Tools.Builtins
             if (keyboard == null || keyControl == null)
                 return;
 
-            using (StateEvent.From(keyboard, out var eventPtr))
+            QueueStateEvent(keyboard, eventPtr =>
             {
                 keyControl.WriteValueIntoEvent(pressed ? 1f : 0f, eventPtr);
+            });
+        }
+
+        private static void QueueStateEvent(InputDevice device, Action<InputEventPtr> writeState)
+        {
+            if (device == null || writeState == null)
+                return;
+
+            using (StateEvent.From(device, out var eventPtr))
+            {
+                writeState(eventPtr);
                 InputSystem.QueueEvent(eventPtr);
             }
+
+            // Editor-driven simulation needs an explicit update so queued events
+            // are applied immediately and InputActions observe the state change.
+            InputSystem.Update();
         }
 
         private static Keyboard EnsureKeyboard()
