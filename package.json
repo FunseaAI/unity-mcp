@@ -1,7 +1,7 @@
 {
   "name": "com.gamebooom.unity.mcp",
   "version": "0.1.2",
-  "displayName": "GameBooom MCP For Unity - Unity MCP Server",
+  "displayName": "GameBooom MCP for Unity",
   "description": "MIT-licensed MCP server for Unity Editor with execute_code, prompts/resources, input simulation, screenshots, and play mode automation.",
   "license": "MIT",
   "unity": "2022.3",
