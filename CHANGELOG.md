@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.6] - 2026-04-08
+
+### Added
+- Core tool `sync_external_changes` for importing external file edits and waiting through compilation/domain reload recovery
+
+### Changed
+- Strengthened `sync_external_changes` tool guidance so AI clients treat it as the default follow-up after external file edits
+- Improved `sync_external_changes` behavior to return an explicit compilation/reload message instead of failing ambiguously during domain reload
+- Persist and report recovery results for external sync operations through `get_reload_recovery_status`
+
 ## [0.1.5] - 2026-04-01
 
 ### Added

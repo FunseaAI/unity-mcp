@@ -9,6 +9,7 @@ using GameBooom.Editor.Settings;
 using GameBooom.Editor.State;
 using GameBooom.Editor.Threading;
 using GameBooom.Editor.Tools;
+using GameBooom.Editor.Tools.Builtins;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ namespace GameBooom.Editor.MCP.Server
         private readonly IStateController _stateController;
         private readonly IEditorContextBuilder _contextBuilder;
         private readonly IApplicationPaths _applicationPaths;
+        private readonly ICompilationService _compilationService;
         private readonly FunctionInvokerController _invoker;
 
         private IMCPTransport _transport;
@@ -45,6 +47,7 @@ namespace GameBooom.Editor.MCP.Server
             IStateController stateController,
             IEditorContextBuilder contextBuilder,
             IApplicationPaths applicationPaths,
+            ICompilationService compilationService,
             FunctionInvokerController invoker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -52,6 +55,7 @@ namespace GameBooom.Editor.MCP.Server
             _stateController = stateController ?? throw new ArgumentNullException(nameof(stateController));
             _contextBuilder = contextBuilder;
             _applicationPaths = applicationPaths ?? throw new ArgumentNullException(nameof(applicationPaths));
+            _compilationService = compilationService ?? throw new ArgumentNullException(nameof(compilationService));
             _invoker = invoker ?? throw new ArgumentNullException(nameof(invoker));
 
             Port = _settings.MCPServerPort;
@@ -101,6 +105,7 @@ namespace GameBooom.Editor.MCP.Server
                 {
                     _isRunning = true;
                     Debug.Log($"[GameBooom] MCP Server started on http://127.0.0.1:{Port}/ 🚀 If this tool saves you time, please consider giving it a ⭐ on GitHub: https://github.com/FunseaAI/unity-mcp");
+                    ExternalSyncRecoveryTracker.TryCompletePendingRecovery();
                     CheckForInterruptedExecution();
                     return true;
                 }
@@ -219,6 +224,14 @@ namespace GameBooom.Editor.MCP.Server
 
                 var scriptResult = TempScriptRunner.ConsumeResult();
                 var summary = interrupted.GetDescription();
+                if (IsSyncExternalChanges(interrupted))
+                {
+                    var compilationSummary = BuildSyncExternalChangesRecoverySummary();
+                    summary += "\n" + compilationSummary.Summary;
+                    PublishRecoverySummary(interrupted, summary, compilationSummary.Status);
+                    return;
+                }
+
                 if (!string.IsNullOrEmpty(scriptResult))
                 {
                     summary += "\nContinuation result:\n" + scriptResult;
@@ -234,6 +247,28 @@ namespace GameBooom.Editor.MCP.Server
 
                 PublishRecoverySummary(interrupted, summary, status);
             });
+        }
+
+        private bool IsSyncExternalChanges(DomainReloadHandler.InterruptedState interrupted)
+        {
+            return string.Equals(
+                interrupted?.PendingFunction?.FunctionName,
+                "sync_external_changes",
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        private (string Summary, MCPToolCallStatus Status) BuildSyncExternalChangesRecoverySummary()
+        {
+            var issues = _compilationService.GetCompilationErrors(includeWarnings: true);
+            var hasIssues = !string.Equals(issues, "No compilation errors or warnings detected.", StringComparison.Ordinal) &&
+                            !string.Equals(issues, "No compilation errors detected.", StringComparison.Ordinal);
+
+            if (hasIssues)
+            {
+                return ("External changes were imported, but compilation reported issues.\n" + issues, MCPToolCallStatus.Error);
+            }
+
+            return ("External changes were imported and script compilation finished successfully after domain reload.", MCPToolCallStatus.Success);
         }
 
         private void PublishRecoverySummary(
