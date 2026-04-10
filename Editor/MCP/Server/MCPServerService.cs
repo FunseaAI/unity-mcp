@@ -35,6 +35,8 @@ namespace GameBooom.Editor.MCP.Server
         private bool _isRunning;
         private bool _disposed;
         private bool _recoveryChecked;
+        private bool _restartScheduled;
+        private bool _restartInProgress;
         private string _toolExportProfileSetting;
 
         public bool IsRunning => _isRunning;
@@ -179,13 +181,61 @@ namespace GameBooom.Editor.MCP.Server
                 Debug.Log("[GameBooom MCP Server] Server settings changed, restarting MCP transport...");
                 Port = _settings.MCPServerPort;
                 _toolExportProfileSetting = _settings.MCPToolExportProfile;
+                ScheduleRestart();
+            }
+        }
 
-                _ = Task.Run(async () =>
-                {
-                    await StopAsync();
-                    await Task.Delay(500);
+        private void ScheduleRestart()
+        {
+            if (_disposed || _restartScheduled)
+                return;
+
+            _restartScheduled = true;
+            EditorApplication.delayCall += RestartTransportAfterSettingsChange;
+        }
+
+        private async void RestartTransportAfterSettingsChange()
+        {
+            _restartScheduled = false;
+
+            if (_disposed)
+                return;
+
+            if (_restartInProgress)
+            {
+                ScheduleRestart();
+                return;
+            }
+
+            _restartInProgress = true;
+            try
+            {
+                await StopAsync();
+
+                if (_disposed)
+                    return;
+
+                EditorApplication.delayCall += StartTransportAfterSettingsChange;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[GameBooom MCP Server] Failed while restarting after settings change: {ex.Message}");
+                _restartInProgress = false;
+            }
+        }
+
+        private async void StartTransportAfterSettingsChange()
+        {
+            try
+            {
+                if (!_disposed)
                     await StartAsync();
-                });
+            }
+            finally
+            {
+                _restartInProgress = false;
+                if (_restartScheduled && !_disposed)
+                    EditorApplication.delayCall += RestartTransportAfterSettingsChange;
             }
         }
 
@@ -253,7 +303,7 @@ namespace GameBooom.Editor.MCP.Server
         {
             return string.Equals(
                 interrupted?.PendingFunction?.FunctionName,
-                "sync_external_changes",
+                "request_recompile",
                 StringComparison.OrdinalIgnoreCase);
         }
 

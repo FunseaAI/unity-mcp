@@ -27,7 +27,6 @@ namespace GameBooom.Editor.MCP.Server
             "analyze_scene_complexity",
             "capture_scene_view",
             "capture_game_view",
-            "sync_external_changes",
             "wait_for_compilation",
             "request_recompile",
             "get_compilation_errors",

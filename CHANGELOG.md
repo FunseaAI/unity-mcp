@@ -1,13 +1,21 @@
 # Changelog
 
+## [0.1.7] - 2026-04-10
+
+### Changed
+- Repurposed `request_recompile` into the default AI-facing sync flow for external file edits, compilation, and domain reload recovery
+- Removed `sync_external_changes` from the exposed MCP tool list to avoid duplicate AI pathways
+- Prevented MCP transport restarts from running on a background thread after settings changes
+- Avoided redundant settings change notifications and UI initialization callbacks in the MCP Server window
+
 ## [0.1.6] - 2026-04-08
 
 ### Added
-- Core tool `sync_external_changes` for importing external file edits and waiting through compilation/domain reload recovery
+- Updated `request_recompile` to import external file edits and wait through compilation/domain reload recovery
 
 ### Changed
-- Strengthened `sync_external_changes` tool guidance so AI clients treat it as the default follow-up after external file edits
-- Improved `sync_external_changes` behavior to return an explicit compilation/reload message instead of failing ambiguously during domain reload
+- Strengthened `request_recompile` tool guidance so AI clients treat it as the default follow-up after external file edits
+- Improved `request_recompile` behavior to return an explicit compilation/reload message instead of failing ambiguously during domain reload
 - Persist and report recovery results for external sync operations through `get_reload_recovery_status`
 
 ## [0.1.5] - 2026-04-01

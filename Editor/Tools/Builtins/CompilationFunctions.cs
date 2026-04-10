@@ -60,7 +60,7 @@ namespace GameBooom.Editor.Tools.Builtins
                      "Call it after modifying .cs, .asmdef, .shader, prefabs, scenes, ScriptableObjects, or other Assets files, and before running tests, entering Play Mode, executing follow-up tools, or assuming Unity has imported the latest state. " +
                      "It forces Unity to import external file changes and handles any resulting script compilation or domain reload recovery.")]
         [ReadOnlyTool]
-        public static async Task<string> SyncExternalChanges(
+        public static async Task<string> RequestRecompile(
             [ToolParam("Maximum seconds to wait for compilation", Required = false)] int timeout_seconds = 30)
         {
             MarkExternalSyncPending();
@@ -105,10 +105,7 @@ namespace GameBooom.Editor.Tools.Builtins
             return "External changes imported. No compilation errors or warnings detected.";
         }
 
-        [Description("Request Unity to recompile scripts asynchronously (non-blocking). " +
-                     "Call get_compilation_errors or wait_for_compilation afterwards to inspect the result.")]
-        [ReadOnlyTool]
-        public static string RequestRecompile()
+        private static string RequestScriptCompilationOnly()
         {
             try
             {
@@ -231,7 +228,7 @@ namespace GameBooom.Editor.Tools.Builtins
             if (compilationService == null)
             {
                 DomainReloadHandler.StoreRecoveryInfo(
-                    "sync_external_changes",
+                    "request_recompile",
                     MCPToolCallStatus.Error.ToString(),
                     "External changes were imported, but compilation service was unavailable after domain reload.");
                 return;
@@ -244,14 +241,14 @@ namespace GameBooom.Editor.Tools.Builtins
             if (hasIssues)
             {
                 DomainReloadHandler.StoreRecoveryInfo(
-                    "sync_external_changes",
+                    "request_recompile",
                     MCPToolCallStatus.Error.ToString(),
                     "External changes were imported, but compilation reported issues.\n" + issues);
                 return;
             }
 
             DomainReloadHandler.StoreRecoveryInfo(
-                "sync_external_changes",
+                "request_recompile",
                 MCPToolCallStatus.Success.ToString(),
                 "External changes were imported and script compilation finished successfully after domain reload.");
         }

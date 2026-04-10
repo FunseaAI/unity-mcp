@@ -16,6 +16,9 @@ namespace GameBooom.Editor.Settings
             get => EditorPrefs.GetBool(Prefix + "MCPServerEnabled", false);
             set
             {
+                if (EditorPrefs.GetBool(Prefix + "MCPServerEnabled", false) == value)
+                    return;
+
                 EditorPrefs.SetBool(Prefix + "MCPServerEnabled", value);
                 OnSettingsChanged?.Invoke();
             }
@@ -26,6 +29,9 @@ namespace GameBooom.Editor.Settings
             get => EditorPrefs.GetInt(Prefix + "MCPServerPort", 8765);
             set
             {
+                if (EditorPrefs.GetInt(Prefix + "MCPServerPort", 8765) == value)
+                    return;
+
                 EditorPrefs.SetInt(Prefix + "MCPServerPort", value);
                 OnSettingsChanged?.Invoke();
             }
@@ -36,7 +42,11 @@ namespace GameBooom.Editor.Settings
             get => EditorPrefs.GetString(Prefix + "MCPToolExportProfile", "core");
             set
             {
-                EditorPrefs.SetString(Prefix + "MCPToolExportProfile", string.IsNullOrWhiteSpace(value) ? "core" : value);
+                var normalized = string.IsNullOrWhiteSpace(value) ? "core" : value;
+                if (string.Equals(EditorPrefs.GetString(Prefix + "MCPToolExportProfile", "core"), normalized, StringComparison.Ordinal))
+                    return;
+
+                EditorPrefs.SetString(Prefix + "MCPToolExportProfile", normalized);
                 OnSettingsChanged?.Invoke();
             }
         }

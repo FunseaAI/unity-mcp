@@ -85,7 +85,7 @@ namespace GameBooom.Editor.MCP.Server
 
             // Enable toggle
             var toggle = new Toggle("Enable MCP Server");
-            toggle.value = _settingsController.MCPServerEnabled;
+            toggle.SetValueWithoutNotify(_settingsController.MCPServerEnabled);
             toggle.RegisterValueChangedCallback(evt =>
             {
                 _settingsController.MCPServerEnabled = evt.newValue;
@@ -102,7 +102,7 @@ namespace GameBooom.Editor.MCP.Server
 
             // Port
             var portField = new IntegerField("Server Port");
-            portField.value = _settingsController.MCPServerPort;
+            portField.SetValueWithoutNotify(_settingsController.MCPServerPort);
             portField.RegisterValueChangedCallback(evt =>
             {
                 _settingsController.MCPServerPort = evt.newValue;
@@ -113,6 +113,7 @@ namespace GameBooom.Editor.MCP.Server
             var toolProfileChoices = new List<string> { "core", "full" };
             var toolProfileField = new PopupField<string>("Tool Exposure", toolProfileChoices,
                 Mathf.Max(0, toolProfileChoices.IndexOf(_settingsController.MCPToolExportProfile ?? "core")));
+            toolProfileField.SetValueWithoutNotify(_settingsController.MCPToolExportProfile ?? "core");
             toolProfileField.RegisterValueChangedCallback(evt =>
             {
                 _settingsController.MCPToolExportProfile = evt.newValue;
