@@ -29,33 +29,13 @@ Describe your game in one sentence — your AI assistant builds it in Unity thro
 >
 > Your AI assistant handles it through GameBooom MCP For Unity: creates the scene, generates all scripts, sets up the UI, and configures the game logic — all from a single prompt.
 
-## Why This Project
-
-- **`execute_code` First** — The package is optimized around one high-flexibility C# execution tool for rich editor/runtime orchestration when many small tools would be noisy
-- **Play Mode Automation** — Enter play mode, simulate keyboard/mouse input, capture screenshots, inspect logs, and validate behavior from the same MCP session
-- **Project Context Built In** — Exposes live resources for project state, active scene, selection, compilation, console output, and MCP interaction history
-- **Focused by Default, Full When Needed** — `core` exposes a compact high-signal toolset; `full` exposes all 79 tools
-- **Single Unity Package** — No extra approval UI, no external daemon to click through, and no Python requirement for the Unity-side plugin itself
-- **Extensible** — Add custom tools with attribute-based discovery, or connect Unity to external MCP services when needed
-
-## Highlights
-
-- **79 Built-in Tools** — Scene editing, assets, scripts, play mode control, screenshots, performance analysis, prompts, resources, and editor automation across 19 modules
-- **Resources & Prompts** — Live project context, scene/selection/error resources, resource templates, and reusable workflow prompts
-- **Input Simulation + Screenshots** — Drive play mode with keyboard/mouse simulation and verify results with game/scene captures
-- **Built-in Updating** — Check for updates from the Unity menu and either re-pull the Git package or auto-import the latest `unitypackage`
-- **MCP Server + MCP Client** — Expose Unity to external AI clients and connect Unity to external MCP servers when needed
-- **Vendor Agnostic** — Works with any AI client that supports MCP: Claude Code, Cursor, Windsurf, Codex, VS Code Copilot, etc.
-
-## Before You Start
-
-- This package is **Editor-only**. It does not add runtime components to your built game.
-- The MCP server listens on `http://127.0.0.1:8765/` by default.
-- The package defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` currently exposes 19 high-signal tools centered on `execute_code`, play mode control, input simulation, screenshots, performance inspection, logs, and compilation checks. Switch to `full` in the MCP Server window if you want all 79 tools exposed.
-- All exposed MCP tools run directly. There is no extra approval toggle.
-- **Menu: `GameBooom > Check for Updates`** can refresh Git installs in place or download and import the latest `.unitypackage` automatically.
-
 ## Quick Start
+
+If you just want to get connected fast, do these three things:
+
+- Install the Unity package from the Git URL
+- Start `GameBooom > MCP Server`
+- Use the built-in one-click client configuration
 
 ### 1. Install via UPM (Git URL)
 
@@ -74,6 +54,12 @@ https://github.com/FunseaAI/unity-mcp.git
 The server runs on `http://127.0.0.1:8765/` by default.
 
 ### 3. Configure Your AI Client
+
+Use the built-in **One-Click MCP Configuration** in the `GameBooom > MCP Server` window first.
+
+Select your target client, click **Configure**, and the package writes the recommended MCP config entry for you.
+
+If you prefer to edit config files manually, use the examples below as fallback references:
 
 <details>
 <summary>Claude Code / Claude Desktop</summary>
@@ -183,6 +169,32 @@ If those work, the MCP server, resources, and primary execution tool are connect
 ### 5. Start Building
 
 Open your AI client and try: *"Create a 3D platformer level with 5 floating platforms"*
+
+## Before You Start
+
+- This package is **Editor-only**. It does not add runtime components to your built game.
+- The MCP server listens on `http://127.0.0.1:8765/` by default.
+- The package defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` currently exposes 19 high-signal tools centered on `execute_code`, play mode control, input simulation, screenshots, performance inspection, logs, and compilation checks. Switch to `full` in the MCP Server window if you want all 79 tools exposed.
+- All exposed MCP tools run directly. There is no extra approval toggle.
+- **Menu: `GameBooom > Check for Updates`** can refresh Git installs in place or download and import the latest `unitypackage` automatically.
+
+## Why This Project
+
+- **`execute_code` First** — The package is optimized around one high-flexibility C# execution tool for rich editor/runtime orchestration when many small tools would be noisy
+- **Play Mode Automation** — Enter play mode, simulate keyboard/mouse input, capture screenshots, inspect logs, and validate behavior from the same MCP session
+- **Project Context Built In** — Exposes live resources for project state, active scene, selection, compilation, console output, and MCP interaction history
+- **Focused by Default, Full When Needed** — `core` exposes a compact high-signal toolset; `full` exposes all 79 tools
+- **Single Unity Package** — No extra approval UI, no external daemon to click through, and no Python requirement for the Unity-side plugin itself
+- **Extensible** — Add custom tools with attribute-based discovery, or connect Unity to external MCP services when needed
+
+## Highlights
+
+- **79 Built-in Tools** — Scene editing, assets, scripts, play mode control, screenshots, performance analysis, prompts, resources, and editor automation across 19 modules
+- **Resources & Prompts** — Live project context, scene/selection/error resources, resource templates, and reusable workflow prompts
+- **Input Simulation + Screenshots** — Drive play mode with keyboard/mouse simulation and verify results with game/scene captures
+- **Built-in Updating** — Check for updates from the Unity menu and either re-pull the Git package or auto-import the latest `unitypackage`
+- **One-Click Client Configuration** — Generate MCP config entries for Claude Code, Cursor, VS Code, Kiro, Trae, Codex, and similar clients directly from the Unity window
+- **Vendor Agnostic** — Works with any AI client that supports MCP: Claude Code, Cursor, Windsurf, Codex, VS Code Copilot, etc.
 
 ## Comparison With Coplay
 

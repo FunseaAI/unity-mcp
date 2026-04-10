@@ -29,33 +29,13 @@ GameBooom MCP For Unity 是一个采用 MIT 协议的 Unity 编辑器 MCP 服务
 >
 > AI 助手通过 GameBooom MCP For Unity 全程处理：创建场景、生成全部脚本、搭建 UI、配置游戏逻辑 — 只需一句话。
 
-## 能力概览
-
-- **`execute_code` 主工具优先** — 核心体验围绕一个高灵活度 C# 执行工具构建，适合复杂编辑器/运行态编排
-- **Play Mode 自动化闭环** — 进入运行模式、模拟键鼠输入、截图、查看日志、验证行为都能在同一 MCP 会话里完成
-- **内建项目上下文** — 直接提供项目状态、当前场景、选择对象、编译错误、控制台输出和 MCP 交互记录资源
-- **默认聚焦，必要时全量** — 默认 `core` 工具集更利于 AI 选工具，需要时可切到 `full` 暴露全部 79 个工具
-- **单 Unity 包落地** — 不需要额外 approval 开关，Unity 侧也不依赖单独 Python 守护进程
-- **可扩展** — 支持 Attribute 发现自定义工具，也支持连接外部 MCP 服务
-
-## 核心特性
-
-- **79 个内置工具** — 覆盖场景编辑、脚本、资产、运行态控制、截图、性能分析、Prompts、Resources 与编辑器自动化，共 19 个模块
-- **Resources 与 Prompts** — 暴露实时项目上下文、场景/选择/错误资源、资源模板，以及常见 Unity 工作流的可复用 MCP Prompt
-- **输入模拟 + 截图验证** — 在 Play Mode 中模拟键盘/鼠标，再用 Game View / Scene View 截图验证结果
-- **内置更新** — 直接在 Unity 菜单中检查更新，并根据安装方式自动重新拉取 Git 包或导入最新 `unitypackage`
-- **MCP Server + MCP Client** — 既能把 Unity 暴露给外部 AI 客户端，也能连接外部 MCP 服务扩展能力
-- **厂商无关** — 兼容任意支持 MCP 的 AI 客户端：Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等
-
-## 开始前说明
-
-- 这是一个 **仅限 Editor** 的包，不会向最终构建产物添加运行时代码。
-- MCP Server 默认监听 `http://127.0.0.1:8765/`。
-- 插件默认使用 `core` MCP 工具暴露配置，减少 AI 客户端的工具噪音；`core` 当前暴露 19 个高频工具，以 `execute_code`、运行模式控制、输入模拟、截图、性能检查、日志和编译检查为主。如果你需要完整工具集，可在 MCP Server 窗口切换到 `full`，暴露全部 79 个工具。
-- 所有已暴露的 MCP 工具都会直接执行，不再提供额外的 approval 开关。
-- **菜单：`GameBooom > Check for Updates`** 可按安装来源自动更新：Git 安装会直接重新拉取，`.unitypackage` 导入会自动下载并导入最新版。
-
 ## 快速开始
+
+如果你只想尽快跑起来，先做这三步：
+
+- 用 Git URL 安装 Unity 包
+- 打开 `GameBooom > MCP Server`
+- 使用内置的一键客户端配置
 
 ### 1. 通过 UPM 安装 (Git URL)
 
@@ -74,6 +54,12 @@ https://github.com/FunseaAI/unity-mcp.git
 默认运行在 `http://127.0.0.1:8765/`。
 
 ### 3. 配置 AI 客户端
+
+优先使用 `GameBooom > MCP Server` 窗口里的 **一键 MCP 配置**。
+
+选择目标客户端后点击 **Configure**，插件会直接帮你写入推荐的 MCP 配置项。
+
+如果你更想手动编辑配置文件，再参考下面这些示例：
 
 <details>
 <summary>Claude Code / Claude Desktop</summary>
@@ -185,6 +171,32 @@ url = "http://127.0.0.1:8765/"
 ### 5. 开始构建
 
 打开你的 AI 客户端，试试：*"创建一个 3D 平台跳跃关卡，包含 5 个浮空平台"*
+
+## 开始前说明
+
+- 这是一个 **仅限 Editor** 的包，不会向最终构建产物添加运行时代码。
+- MCP Server 默认监听 `http://127.0.0.1:8765/`。
+- 插件默认使用 `core` MCP 工具暴露配置，减少 AI 客户端的工具噪音；`core` 当前暴露 19 个高频工具，以 `execute_code`、运行模式控制、输入模拟、截图、性能检查、日志和编译检查为主。如果你需要完整工具集，可在 MCP Server 窗口切换到 `full`，暴露全部 79 个工具。
+- 所有已暴露的 MCP 工具都会直接执行，不再提供额外的 approval 开关。
+- **菜单：`GameBooom > Check for Updates`** 可按安装来源自动更新：Git 安装会直接重新拉取，`.unitypackage` 导入会自动下载并导入最新版。
+
+## 能力概览
+
+- **`execute_code` 主工具优先** — 核心体验围绕一个高灵活度 C# 执行工具构建，适合复杂编辑器/运行态编排
+- **Play Mode 自动化闭环** — 进入运行模式、模拟键鼠输入、截图、查看日志、验证行为都能在同一 MCP 会话里完成
+- **内建项目上下文** — 直接提供项目状态、当前场景、选择对象、编译错误、控制台输出和 MCP 交互记录资源
+- **默认聚焦，必要时全量** — 默认 `core` 工具集更利于 AI 选工具，需要时可切到 `full` 暴露全部 79 个工具
+- **单 Unity 包落地** — 不需要额外 approval 开关，Unity 侧也不依赖单独 Python 守护进程
+- **可扩展** — 支持 Attribute 发现自定义工具，也支持连接外部 MCP 服务
+
+## 核心特性
+
+- **79 个内置工具** — 覆盖场景编辑、脚本、资产、运行态控制、截图、性能分析、Prompts、Resources 与编辑器自动化，共 19 个模块
+- **Resources 与 Prompts** — 暴露实时项目上下文、场景/选择/错误资源、资源模板，以及常见 Unity 工作流的可复用 MCP Prompt
+- **输入模拟 + 截图验证** — 在 Play Mode 中模拟键盘/鼠标，再用 Game View / Scene View 截图验证结果
+- **内置更新** — 直接在 Unity 菜单中检查更新，并根据安装方式自动重新拉取 Git 包或导入最新 `unitypackage`
+- **一键客户端配置** — 直接在 Unity 窗口里为 Claude Code、Cursor、VS Code、Kiro、Trae、Codex 等客户端生成 MCP 配置
+- **厂商无关** — 兼容任意支持 MCP 的 AI 客户端：Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等
 
 ## 与 Coplay 的对比
 
