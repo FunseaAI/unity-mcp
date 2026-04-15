@@ -23,7 +23,7 @@ namespace GameBooom.Editor.MCP.Server
         private Label _configStatusLabel;
         private Label _configPathLabel;
 
-        [MenuItem("GameBooom/MCP Server")]
+        [MenuItem("Funplay/MCP Server")]
         public static void ShowWindow()
         {
             var window = GetWindow<GameBooomMCPWindow>("MCP Server");
@@ -177,7 +177,7 @@ namespace GameBooom.Editor.MCP.Server
                     Name = "Codex",
                     ConfigPath = Path.Combine(homePath, ".codex", "config.toml"),
                     IsToml = true,
-                    TomlSection = $"[mcp_servers.gamebooom]\nurl = \"http://127.0.0.1:{port}/\"\n"
+                    TomlSection = $"[mcp_servers.funplay]\nurl = \"http://127.0.0.1:{port}/\"\n"
                 },
             };
 
@@ -439,7 +439,7 @@ namespace GameBooom.Editor.MCP.Server
         private void ConfigureJsonTarget(MCPConfigTarget target)
         {
             var rootKey = string.IsNullOrEmpty(target.RootKey) ? "mcpServers" : target.RootKey;
-            var serverName = "gamebooom";
+            var serverName = "funplay";
             Dictionary<string, object> root;
 
             if (File.Exists(target.ConfigPath))
@@ -475,7 +475,7 @@ namespace GameBooom.Editor.MCP.Server
 
         private void ConfigureTomlTarget(MCPConfigTarget target)
         {
-            var sectionHeader = "[mcp_servers.gamebooom]";
+            var sectionHeader = "[mcp_servers.funplay]";
             var content = File.Exists(target.ConfigPath) ? File.ReadAllText(target.ConfigPath) : "";
 
             if (content.Contains(sectionHeader))

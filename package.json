@@ -1,7 +1,7 @@
 {
-  "name": "com.gamebooom.unity.mcp",
+  "name": "com.funplay.unity.mcp",
   "version": "0.1.7",
-  "displayName": "GameBooom MCP for Unity",
+  "displayName": "Funplay MCP for Unity",
   "description": "MIT-licensed MCP server for Unity Editor with execute_code, prompts/resources, input simulation, screenshots, and play mode automation.",
   "license": "MIT",
   "unity": "2022.3",
@@ -11,10 +11,10 @@
   },
   "keywords": ["mcp", "ai", "llm", "editor", "tools", "model-context-protocol"],
   "author": {
-    "name": "FunseaAI"
+    "name": "FunplayAI"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/FunseaAI/unity-mcp.git"
+    "url": "https://github.com/FunplayAI/funplay-unity-mcp.git"
   }
 }

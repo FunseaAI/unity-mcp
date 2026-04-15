@@ -103,7 +103,7 @@ namespace GameBooom.Editor.Tools
                                 }
                                 else
                                 {
-                                    Debug.LogWarning($"[GameBooom] Duplicate tool function name: {snakeName}");
+                                    Debug.LogWarning($"[Funplay] Duplicate tool function name: {snakeName}");
                                 }
                             }
                         }
@@ -116,7 +116,7 @@ namespace GameBooom.Editor.Tools
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] Error scanning assemblies for tool functions: {ex.Message}");
+                Debug.LogError($"[Funplay] Error scanning assemblies for tool functions: {ex.Message}");
             }
         }
 
@@ -158,7 +158,7 @@ namespace GameBooom.Editor.Tools
 
             if (BlockedTools.Contains(name))
             {
-                Debug.LogWarning($"[GameBooom] Cannot register blocked tool: {name}");
+                Debug.LogWarning($"[Funplay] Cannot register blocked tool: {name}");
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace GameBooom.Editor.Tools
                 };
             }
 
-            Debug.Log($"[GameBooom] Registered manual tool: {name}");
+            Debug.Log($"[Funplay] Registered manual tool: {name}");
         }
 
         /// <summary>

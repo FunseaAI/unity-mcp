@@ -29,7 +29,7 @@
 ## [0.1.4] - 2026-04-01
 
 ### Added
-- Built-in update checking from `GameBooom/Check for Updates` with install-source aware behavior
+- Built-in update checking from `Funplay/Check for Updates` with install-source aware behavior
 - Automatic Git package refresh for Git-based installs
 - Automatic latest `.unitypackage` download and import for asset-import installs
 
@@ -37,7 +37,7 @@
 - Game View screenshots now default to the current Game View render size instead of a fixed 512x512 capture
 - Mouse click simulation now maps coordinates against the real Game View render size for more reliable UI and physics hits
 - Package version resolution now prefers the actual installed package location so Git installs report the correct version
-- Package metadata now points to the `FunseaAI/unity-mcp` repository and `0.1.4`
+- Package metadata now points to the `FunplayAI/funplay-unity-mcp` repository and `0.1.4`
 
 ## [0.1.2] - 2026-03-30
 
@@ -69,7 +69,7 @@
 ## [0.1.0] - 2026-03-12
 
 ### Added
-- Initial release of GameBooom MCP For Unity (Community Edition)
+- Initial release of Funplay MCP for Unity (Community Edition)
 - MCP Server with HTTP JSON-RPC 2.0 transport
 - 60+ built-in tool functions across 15 modules (scene, asset, script, UI, camera, animation, etc.)
 - Reflection-based tool discovery with attribute annotations

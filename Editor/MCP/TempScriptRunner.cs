@@ -74,7 +74,7 @@ namespace GameBooom.Editor.MCP
                 }
             }
 
-            Debug.Log($"[GameBooom] Cleaned up {files.Length} leftover temp scripts.");
+            Debug.Log($"[Funplay] Cleaned up {files.Length} leftover temp scripts.");
             AssetDatabase.Refresh();
         }
 
@@ -115,12 +115,12 @@ namespace GameBooom.Editor.MCP
             {
                 var inner = ex.InnerException ?? ex;
                 result = $"Error: {inner.Message}\n{inner.StackTrace}";
-                Debug.LogError($"[GameBooom] Script execution failed: {inner.Message}\n{inner.StackTrace}");
+                Debug.LogError($"[Funplay] Script execution failed: {inner.Message}\n{inner.StackTrace}");
             }
             catch (Exception ex)
             {
                 result = $"Error: {ex.Message}";
-                Debug.LogError($"[GameBooom] Script execution failed: {ex.Message}");
+                Debug.LogError($"[Funplay] Script execution failed: {ex.Message}");
             }
 
             StoreResult(result);
@@ -164,14 +164,14 @@ namespace GameBooom.Editor.MCP
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[GameBooom] Failed to clean up temp script: {ex.Message}");
+                Debug.LogWarning($"[Funplay] Failed to clean up temp script: {ex.Message}");
             }
         }
 
         private static void StoreResult(string result)
         {
             SessionState.SetString(ResultKey, result);
-            Debug.Log($"[GameBooom] Script execution result: {result}");
+            Debug.Log($"[Funplay] Script execution result: {result}");
         }
 
         private static void OnAssemblyCompilationFinished(string assemblyPath, CompilerMessage[] messages)
@@ -212,7 +212,7 @@ namespace GameBooom.Editor.MCP
             StoreResult(result);
             CleanupFile(tempPath);
             OnCompilationFailed?.Invoke(result);
-            Debug.LogWarning("[GameBooom] Generated script had compilation errors. Cleaned up temp file.");
+            Debug.LogWarning("[Funplay] Generated script had compilation errors. Cleaned up temp file.");
         }
     }
 }

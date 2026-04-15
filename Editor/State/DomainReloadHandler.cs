@@ -116,7 +116,7 @@ namespace GameBooom.Editor.State
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[GameBooom] Failed to parse recovery info: {ex.Message}");
+                Debug.LogWarning($"[Funplay] Failed to parse recovery info: {ex.Message}");
                 return null;
             }
         }
@@ -241,7 +241,7 @@ namespace GameBooom.Editor.State
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[GameBooom] Failed to parse pending function state: {ex.Message}");
+                Debug.LogWarning($"[Funplay] Failed to parse pending function state: {ex.Message}");
                 return null;
             }
         }

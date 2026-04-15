@@ -33,7 +33,7 @@ namespace GameBooom.Editor.Tools
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[GameBooom] Manual tool '{functionCall.FunctionName}' failed: {ex.Message}");
+                    Debug.LogError($"[Funplay] Manual tool '{functionCall.FunctionName}' failed: {ex.Message}");
                     return $"Error: {ex.Message}";
                 }
             }
@@ -51,12 +51,12 @@ namespace GameBooom.Editor.Tools
             catch (TargetInvocationException ex)
             {
                 var inner = ex.InnerException ?? ex;
-                Debug.LogError($"[GameBooom] Function '{functionCall.FunctionName}' failed: {inner.Message}\n{inner.StackTrace}");
+                Debug.LogError($"[Funplay] Function '{functionCall.FunctionName}' failed: {inner.Message}\n{inner.StackTrace}");
                 return $"Error: {inner.Message}";
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] Function invoke error for '{functionCall.FunctionName}': {ex.Message}");
+                Debug.LogError($"[Funplay] Function invoke error for '{functionCall.FunctionName}': {ex.Message}");
                 return $"Error: {ex.Message}";
             }
         }

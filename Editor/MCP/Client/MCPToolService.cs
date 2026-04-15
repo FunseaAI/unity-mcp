@@ -44,19 +44,19 @@ namespace GameBooom.Editor.MCP.Client
             try
             {
                 _host = new MCPHost(command, arguments, envVars);
-                _host.OnLog += msg => Debug.Log($"[GameBooom MCP] {msg}");
+                _host.OnLog += msg => Debug.Log($"[Funplay MCP] {msg}");
 
                 var connected = await _host.ConnectAsync(ct);
                 if (!connected)
                 {
-                    Debug.LogWarning("[GameBooom] Failed to connect to MCP server.");
+                    Debug.LogWarning("[Funplay] Failed to connect to MCP server.");
                     return false;
                 }
 
                 var toolsJson = await _host.ListToolsAsync(ct);
                 if (string.IsNullOrEmpty(toolsJson))
                 {
-                    Debug.LogWarning("[GameBooom] MCP server returned no tools.");
+                    Debug.LogWarning("[Funplay] MCP server returned no tools.");
                     return false;
                 }
 
@@ -66,12 +66,12 @@ namespace GameBooom.Editor.MCP.Client
                     _mcpToolNames.Add(td.function.name);
 
                 _isRunning = true;
-                Debug.Log($"[GameBooom] MCP started. Discovered {_toolDefinitions.Count} tools.");
+                Debug.Log($"[Funplay] MCP started. Discovered {_toolDefinitions.Count} tools.");
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] MCP start failed: {ex.Message}");
+                Debug.LogError($"[Funplay] MCP start failed: {ex.Message}");
                 _toolDefinitions.Clear();
                 _mcpToolNames.Clear();
                 return false;

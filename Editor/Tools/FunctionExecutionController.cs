@@ -123,7 +123,7 @@ namespace GameBooom.Editor.Tools
                 functionCall.Error = ex.Message;
                 functionCall.Result = $"Error: {ex.Message}";
                 functionCall.SetState(FunctionState.Failed);
-                Debug.LogError($"[GameBooom] Function execution error: {ex.Message}");
+                Debug.LogError($"[Funplay] Function execution error: {ex.Message}");
             }
 
             OnFunctionCompleted?.Invoke(functionCall);

@@ -32,13 +32,13 @@ namespace GameBooom.Editor.MCP.Server
                 if (mcpServer?.IsRunning != true)
                     return;
 
-                Debug.Log("[GameBooom MCP Server] Saving state before domain reload");
+                Debug.Log("[Funplay MCP Server] Saving state before domain reload");
                 SessionState.SetBool(WasRunningKey, true);
                 SessionState.SetInt(PortKey, mcpServer.Port);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error preparing reload state: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error preparing reload state: {ex.Message}");
             }
         }
 
@@ -56,7 +56,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error in OnBeforeReload: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error in OnBeforeReload: {ex.Message}");
             }
         }
 
@@ -66,7 +66,7 @@ namespace GameBooom.Editor.MCP.Server
             {
                 if (SessionState.GetBool(WasRunningKey, false))
                 {
-                    Debug.Log("[GameBooom MCP Server] Restarting server after domain reload");
+                    Debug.Log("[Funplay MCP Server] Restarting server after domain reload");
 
                     EditorApplication.delayCall += () =>
                     {
@@ -86,12 +86,12 @@ namespace GameBooom.Editor.MCP.Server
                             }
                             else
                             {
-                                Debug.LogWarning("[GameBooom MCP Server] Could not restart: service not found");
+                                Debug.LogWarning("[Funplay MCP Server] Could not restart: service not found");
                             }
                         }
                         catch (System.Exception ex)
                         {
-                            Debug.LogError($"[GameBooom MCP Server] Error restarting after reload: {ex.Message}");
+                            Debug.LogError($"[Funplay MCP Server] Error restarting after reload: {ex.Message}");
                         }
                         finally
                         {
@@ -103,7 +103,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error in OnAfterReload: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error in OnAfterReload: {ex.Message}");
             }
         }
     }

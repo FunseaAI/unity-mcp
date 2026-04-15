@@ -1,6 +1,6 @@
 # Release Checklist
 
-Use this checklist before publishing a new open-source release of GameBooom MCP For Unity.
+Use this checklist before publishing a new open-source release of Funplay MCP for Unity.
 
 ## 1. Repository Hygiene
 
@@ -14,7 +14,7 @@ Use this checklist before publishing a new open-source release of GameBooom MCP 
 
 - [ ] Test in a clean Unity `2022.3+` project
 - [ ] Install the package from the Git URL
-- [ ] Open `GameBooom > MCP Server`
+- [ ] Open `Funplay > MCP Server`
 - [ ] Start the MCP server successfully
 - [ ] Confirm the default endpoint is reachable at `http://127.0.0.1:8765/`
 - [ ] Run a read-only tool such as `get_scene_info`

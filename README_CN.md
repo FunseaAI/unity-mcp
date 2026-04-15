@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">GameBooom MCP For Unity</h1>
+  <h1 align="center">Funplay MCP for Unity</h1>
   <p align="center">
     <strong>The Most Advanced MCP Server for Unity Editor</strong>
   </p>
@@ -21,20 +21,20 @@
 
 ---
 
-GameBooom MCP For Unity 是一个采用 MIT 协议的 Unity 编辑器 MCP 服务器，让 Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等 AI 助手直接操作正在运行的 Unity 项目。
+Funplay MCP for Unity 是一个采用 MIT 协议的 Unity 编辑器 MCP 服务器，让 Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等 AI 助手直接操作正在运行的 Unity 项目。
 
-一句话描述你的游戏 — AI 助手通过 GameBooom MCP For Unity 的 79 个内置工具自动创建场景、编写脚本、验证运行态、模拟输入、分析性能并完成编辑器自动化，把所有逻辑串联起来。
+一句话描述你的游戏 — AI 助手通过 Funplay MCP for Unity 的 79 个内置工具自动创建场景、编写脚本、验证运行态、模拟输入、分析性能并完成编辑器自动化，把所有逻辑串联起来。
 
 > *"做一个贪吃蛇游戏，10x10 网格，食物随机生成，计分 UI，游戏结束界面"*
 >
-> AI 助手通过 GameBooom MCP For Unity 全程处理：创建场景、生成全部脚本、搭建 UI、配置游戏逻辑 — 只需一句话。
+> AI 助手通过 Funplay MCP for Unity 全程处理：创建场景、生成全部脚本、搭建 UI、配置游戏逻辑 — 只需一句话。
 
 ## 快速开始
 
 如果你只想尽快跑起来，先做这三步：
 
 - 用 Git URL 安装 Unity 包
-- 打开 `GameBooom > MCP Server`
+- 打开 `Funplay > MCP Server`
 - 使用内置的一键客户端配置
 
 ### 1. 通过 UPM 安装 (Git URL)
@@ -42,20 +42,20 @@ GameBooom MCP For Unity 是一个采用 MIT 协议的 Unity 编辑器 MCP 服务
 在 Unity 中，打开 **Window → Package Manager → + → Add package from git URL**：
 
 ```
-https://github.com/FunseaAI/unity-mcp.git
+https://github.com/FunplayAI/funplay-unity-mcp.git
 ```
 
 > 💡 在 clone 或安装之前，如果你愿意顺手点一个 ⭐，会非常感谢。
 
 ### 2. 启动 MCP Server
 
-**菜单：GameBooom → MCP Server** 启动服务。
+**菜单：Funplay → MCP Server** 启动服务。
 
 默认运行在 `http://127.0.0.1:8765/`。
 
 ### 3. 配置 AI 客户端
 
-优先使用 `GameBooom > MCP Server` 窗口里的 **一键 MCP 配置**。
+优先使用 `Funplay > MCP Server` 窗口里的 **一键 MCP 配置**。
 
 选择目标客户端后点击 **Configure**，插件会直接帮你写入推荐的 MCP 配置项。
 
@@ -67,7 +67,7 @@ https://github.com/FunseaAI/unity-mcp.git
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "type": "http",
       "url": "http://127.0.0.1:8765/"
     }
@@ -83,7 +83,7 @@ https://github.com/FunseaAI/unity-mcp.git
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "url": "http://127.0.0.1:8765/"
     }
   }
@@ -98,7 +98,7 @@ https://github.com/FunseaAI/unity-mcp.git
 ```json
 {
   "servers": {
-    "gamebooom": {
+    "funplay": {
       "type": "http",
       "url": "http://127.0.0.1:8765/"
     }
@@ -114,7 +114,7 @@ https://github.com/FunseaAI/unity-mcp.git
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "url": "http://127.0.0.1:8765/"
     }
   }
@@ -129,7 +129,7 @@ https://github.com/FunseaAI/unity-mcp.git
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "type": "http",
       "url": "http://127.0.0.1:8765/"
     }
@@ -143,7 +143,7 @@ https://github.com/FunseaAI/unity-mcp.git
 <summary>Codex</summary>
 
 ```toml
-[mcp_servers.gamebooom]
+[mcp_servers.funplay]
 url = "http://127.0.0.1:8765/"
 ```
 
@@ -178,7 +178,7 @@ url = "http://127.0.0.1:8765/"
 - MCP Server 默认监听 `http://127.0.0.1:8765/`。
 - 插件默认使用 `core` MCP 工具暴露配置，减少 AI 客户端的工具噪音；`core` 当前暴露 19 个高频工具，以 `execute_code`、运行模式控制、输入模拟、截图、性能检查、日志和编译检查为主。如果你需要完整工具集，可在 MCP Server 窗口切换到 `full`，暴露全部 79 个工具。
 - 所有已暴露的 MCP 工具都会直接执行，不再提供额外的 approval 开关。
-- **菜单：`GameBooom > Check for Updates`** 可按安装来源自动更新：Git 安装会直接重新拉取，`.unitypackage` 导入会自动下载并导入最新版。
+- **菜单：`Funplay > Check for Updates`** 可按安装来源自动更新：Git 安装会直接重新拉取，`.unitypackage` 导入会自动下载并导入最新版。
 
 ## 能力概览
 
@@ -202,7 +202,7 @@ url = "http://127.0.0.1:8765/"
 
 下表基于 Coplay 官方公开 GitHub README 所描述的能力与安装方式进行对比。
 
-| 维度 | GameBooom MCP For Unity | Coplay `unity-mcp` |
+| 维度 | Funplay MCP for Unity | Coplay `unity-mcp` |
 |------|-------------------------|--------------------|
 | Unity 侧架构 | Unity 包内置 HTTP MCP server | Unity bridge + 本地 Python MCP server |
 | 额外本地依赖 | `core` 工作流下只需要 Unity 包本身 | 官方 quick start 要求 Python 3.10+ 与 `uv` |
@@ -225,7 +225,7 @@ Coplay 信息来源：[CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-m
 
 ## 内置工具
 
-GameBooom MCP For Unity 当前提供 **79 个工具函数**，覆盖 19 个模块：
+Funplay MCP for Unity 当前提供 **79 个工具函数**，覆盖 19 个模块：
 
 | 分类 | 工具 |
 |------|------|

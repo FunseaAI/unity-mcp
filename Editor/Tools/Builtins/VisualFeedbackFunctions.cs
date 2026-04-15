@@ -66,9 +66,9 @@ namespace GameBooom.Editor.Tools.Builtins
         {
             switch (log_type.ToLowerInvariant())
             {
-                case "warning": Debug.LogWarning($"[GameBooom] {message}"); break;
-                case "error": Debug.LogError($"[GameBooom] {message}"); break;
-                default: Debug.Log($"[GameBooom] {message}"); break;
+                case "warning": Debug.LogWarning($"[Funplay] {message}"); break;
+                case "error": Debug.LogError($"[Funplay] {message}"); break;
+                default: Debug.Log($"[Funplay] {message}"); break;
             }
             return $"Logged {log_type}: {message}";
         }
@@ -166,7 +166,9 @@ namespace GameBooom.Editor.Tools.Builtins
                     int mode = (int)modeField.GetValue(entry);
                     string message = (string)messageField.GetValue(entry);
 
-                    if (message != null && message.StartsWith("[GameBooom")) continue;
+                    if (message != null &&
+                        (message.StartsWith("[GameBooom", StringComparison.Ordinal) ||
+                         message.StartsWith("[Funplay", StringComparison.Ordinal))) continue;
 
                     // Classify: ERROR (bits 0,1,4,8,11), WARN (bits 9,12), LOG (others)
                     const int errorMask = 1 | (1 << 1) | (1 << 4) | (1 << 8) | (1 << 11);

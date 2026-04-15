@@ -90,7 +90,9 @@ namespace GameBooom.Editor.Services.UnityLogs
                 return;
 
             if (message.StartsWith("[GameBooom]", StringComparison.Ordinal) ||
-                message.StartsWith("[GameBooom MCP Server]", StringComparison.Ordinal))
+                message.StartsWith("[GameBooom MCP Server]", StringComparison.Ordinal) ||
+                message.StartsWith("[Funplay]", StringComparison.Ordinal) ||
+                message.StartsWith("[Funplay MCP Server]", StringComparison.Ordinal))
             {
                 return;
             }

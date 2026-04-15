@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">GameBooom MCP For Unity</h1>
+  <h1 align="center">Funplay MCP for Unity</h1>
   <p align="center">
     <strong>The Most Advanced MCP Server for Unity Editor</strong>
   </p>
@@ -21,20 +21,20 @@
 
 ---
 
-GameBooom MCP For Unity is an MIT-licensed Unity Editor MCP server that lets AI assistants like Claude Code, Cursor, Windsurf, Codex, and VS Code Copilot operate directly inside your running Unity project.
+Funplay MCP for Unity is an MIT-licensed Unity Editor MCP server that lets AI assistants like Claude Code, Cursor, Windsurf, Codex, and VS Code Copilot operate directly inside your running Unity project.
 
-Describe your game in one sentence — your AI assistant builds it in Unity through GameBooom MCP For Unity's 79 built-in tools for scene creation, script generation, runtime validation, input simulation, performance analysis, and editor automation.
+Describe your game in one sentence — your AI assistant builds it in Unity through Funplay MCP for Unity's 79 built-in tools for scene creation, script generation, runtime validation, input simulation, performance analysis, and editor automation.
 
 > *"Build a snake game with a 10x10 grid, food spawning, score UI, and game-over screen"*
 >
-> Your AI assistant handles it through GameBooom MCP For Unity: creates the scene, generates all scripts, sets up the UI, and configures the game logic — all from a single prompt.
+> Your AI assistant handles it through Funplay MCP for Unity: creates the scene, generates all scripts, sets up the UI, and configures the game logic — all from a single prompt.
 
 ## Quick Start
 
 If you just want to get connected fast, do these three things:
 
 - Install the Unity package from the Git URL
-- Start `GameBooom > MCP Server`
+- Start `Funplay > MCP Server`
 - Use the built-in one-click client configuration
 
 ### 1. Install via UPM (Git URL)
@@ -42,20 +42,20 @@ If you just want to get connected fast, do these three things:
 In Unity, go to **Window → Package Manager → + → Add package from git URL**:
 
 ```
-https://github.com/FunseaAI/unity-mcp.git
+https://github.com/FunplayAI/funplay-unity-mcp.git
 ```
 
 > 💡 Before you clone or install, a quick ⭐ on GitHub would be greatly appreciated.
 
 ### 2. Start the MCP Server
 
-**Menu: GameBooom → MCP Server** to start the server.
+**Menu: Funplay → MCP Server** to start the server.
 
 The server runs on `http://127.0.0.1:8765/` by default.
 
 ### 3. Configure Your AI Client
 
-Use the built-in **One-Click MCP Configuration** in the `GameBooom > MCP Server` window first.
+Use the built-in **One-Click MCP Configuration** in the `Funplay > MCP Server` window first.
 
 Select your target client, click **Configure**, and the package writes the recommended MCP config entry for you.
 
@@ -67,7 +67,7 @@ If you prefer to edit config files manually, use the examples below as fallback 
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "type": "http",
       "url": "http://127.0.0.1:8765/"
     }
@@ -83,7 +83,7 @@ If you prefer to edit config files manually, use the examples below as fallback 
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "url": "http://127.0.0.1:8765/"
     }
   }
@@ -98,7 +98,7 @@ If you prefer to edit config files manually, use the examples below as fallback 
 ```json
 {
   "servers": {
-    "gamebooom": {
+    "funplay": {
       "type": "http",
       "url": "http://127.0.0.1:8765/"
     }
@@ -114,7 +114,7 @@ If you prefer to edit config files manually, use the examples below as fallback 
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "url": "http://127.0.0.1:8765/"
     }
   }
@@ -129,7 +129,7 @@ If you prefer to edit config files manually, use the examples below as fallback 
 ```json
 {
   "mcpServers": {
-    "gamebooom": {
+    "funplay": {
       "type": "http",
       "url": "http://127.0.0.1:8765/"
     }
@@ -143,7 +143,7 @@ If you prefer to edit config files manually, use the examples below as fallback 
 <summary>Codex</summary>
 
 ```toml
-[mcp_servers.gamebooom]
+[mcp_servers.funplay]
 url = "http://127.0.0.1:8765/"
 ```
 
@@ -176,7 +176,7 @@ Open your AI client and try: *"Create a 3D platformer level with 5 floating plat
 - The MCP server listens on `http://127.0.0.1:8765/` by default.
 - The package defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` currently exposes 19 high-signal tools centered on `execute_code`, play mode control, input simulation, screenshots, performance inspection, logs, and compilation checks. Switch to `full` in the MCP Server window if you want all 79 tools exposed.
 - All exposed MCP tools run directly. There is no extra approval toggle.
-- **Menu: `GameBooom > Check for Updates`** can refresh Git installs in place or download and import the latest `unitypackage` automatically.
+- **Menu: `Funplay > Check for Updates`** can refresh Git installs in place or download and import the latest `unitypackage` automatically.
 
 ## Why This Project
 
@@ -200,7 +200,7 @@ Open your AI client and try: *"Create a 3D platformer level with 5 floating plat
 
 The table below compares this repository with the publicly documented behavior of Coplay's open-source `unity-mcp` repository on GitHub.
 
-| Area | GameBooom MCP For Unity | Coplay `unity-mcp` |
+| Area | Funplay MCP for Unity | Coplay `unity-mcp` |
 |------|--------------------------|--------------------|
 | Unity-side architecture | Embedded Unity Editor package with built-in HTTP MCP server | Unity bridge plus local Python MCP server |
 | Extra local prerequisites | Unity package only for core workflows | Unity + Python 3.10+ + `uv` according to the public quick start |
@@ -223,7 +223,7 @@ The current open-source package exposes four high-value capability layers:
 
 ## Built-in Tools
 
-GameBooom MCP For Unity currently ships with **79 tool functions** across 19 modules:
+Funplay MCP for Unity currently ships with **79 tool functions** across 19 modules:
 
 | Category | Tools |
 |----------|-------|

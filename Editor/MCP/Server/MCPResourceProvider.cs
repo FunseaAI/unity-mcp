@@ -216,7 +216,7 @@ namespace GameBooom.Editor.MCP.Server
         private string BuildProjectContext()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("GameBooom MCP Project Context");
+            sb.AppendLine("Funplay MCP Project Context");
             sb.AppendLine("- Project: " + _projectName);
             sb.AppendLine("- Unity: " + Application.unityVersion);
             sb.AppendLine("- Package Version: " + PackageVersionUtility.CurrentVersion);

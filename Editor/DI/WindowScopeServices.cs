@@ -36,7 +36,7 @@ namespace GameBooom.Editor.DI
                 }
                 else
                 {
-                    Debug.LogError("[GameBooom] Root service provider is not initialized.");
+                    Debug.LogError("[Funplay] Root service provider is not initialized.");
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace GameBooom.Editor.DI
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] Error disposing window scope: {ex}");
+                Debug.LogError($"[Funplay] Error disposing window scope: {ex}");
             }
         }
 
@@ -66,7 +66,7 @@ namespace GameBooom.Editor.DI
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] Error disposing window scope during reset: {ex}");
+                Debug.LogError($"[Funplay] Error disposing window scope during reset: {ex}");
             }
             finally
             {

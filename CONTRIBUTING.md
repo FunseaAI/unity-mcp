@@ -1,4 +1,4 @@
-# Contributing to GameBooom MCP For Unity
+# Contributing to Funplay MCP for Unity
 
 Thanks for your interest in contributing! Here's how to get started.
 
@@ -7,14 +7,14 @@ Thanks for your interest in contributing! Here's how to get started.
 1. Create or open a clean Unity `2022.3+` test project
 2. Add this repository to the project as a local package or Git package
 3. Open the project in Unity Editor and wait for compilation to finish
-4. Open **GameBooom → MCP Server**
+4. Open **Funplay → MCP Server**
 5. Start the server and confirm it is reachable at `http://127.0.0.1:8765/`
 
 ## Code Style
 
 - C# with 4-space indentation (see `.editorconfig`)
 - All classes are `internal` (editor-only plugin)
-- Root namespace: `GameBooom.Editor`
+- Root namespace remains `GameBooom.Editor` for compatibility
 - Comments in Chinese or English are both fine
 
 ## Adding a New Tool
@@ -32,7 +32,7 @@ See [README.md](README.md#adding-custom-tools) for a full example.
 
 Before submitting a PR, please verify the change in a Unity test project:
 
-1. Open **GameBooom → MCP Server**
+1. Open **Funplay → MCP Server**
 2. Confirm the MCP server starts successfully
 3. Run at least one read-only workflow such as `get_scene_info`
 4. If your change affects scene editing, run at least one write workflow such as `create_game_object`

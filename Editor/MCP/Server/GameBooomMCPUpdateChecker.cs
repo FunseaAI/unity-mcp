@@ -15,18 +15,18 @@ namespace GameBooom.Editor.MCP.Server
 {
     internal static class GameBooomMCPUpdateChecker
     {
-        private const string PackageName = "com.gamebooom.unity.mcp";
-        private const string PackageRoot = "Packages/com.gamebooom.unity.mcp";
+        private const string PackageName = "com.funplay.unity.mcp";
+        private const string PackageRoot = "Packages/com.funplay.unity.mcp";
         private const string DefaultAssetRoot = "Assets/unity-mcp";
-        private const string GitRepositoryUrl = "https://github.com/FunseaAI/unity-mcp.git";
-        private const string LatestReleaseApiUrl = "https://api.github.com/repos/FunseaAI/unity-mcp/releases/latest";
-        private const string DefaultReleasesUrl = "https://github.com/FunseaAI/unity-mcp/releases";
+        private const string GitRepositoryUrl = "https://github.com/FunplayAI/funplay-unity-mcp.git";
+        private const string LatestReleaseApiUrl = "https://api.github.com/repos/FunplayAI/funplay-unity-mcp/releases/latest";
+        private const string DefaultReleasesUrl = "https://github.com/FunplayAI/funplay-unity-mcp/releases";
         private const string ScriptRootSuffix = "/Editor/MCP/Server/MCPServerService.cs";
 
-        [MenuItem("GameBooom/Check for Updates", priority = 51)]
+        [MenuItem("Funplay/Check for Updates", priority = 51)]
         public static async void CheckForUpdates()
         {
-            EditorUtility.DisplayProgressBar("GameBooom MCP", "Checking for updates...", 0.4f);
+            EditorUtility.DisplayProgressBar("Funplay MCP", "Checking for updates...", 0.4f);
 
             try
             {
@@ -36,7 +36,7 @@ namespace GameBooom.Editor.MCP.Server
                 if (latestRelease == null)
                 {
                     EditorUtility.DisplayDialog(
-                        "GameBooom MCP",
+                        "Funplay MCP",
                         "Failed to fetch the latest release information from GitHub.",
                         "OK");
                     return;
@@ -78,7 +78,7 @@ namespace GameBooom.Editor.MCP.Server
                 if (latestSemVer == currentSemVer)
                 {
                     if (EditorUtility.DisplayDialog(
-                            "GameBooom MCP",
+                            "Funplay MCP",
                             $"You are up to date.\n\nCurrent version: {currentVersion}\nLatest version: {latestVersion}\nInstall source: {installContext.Description}",
                             "View Release",
                             "Close"))
@@ -90,14 +90,14 @@ namespace GameBooom.Editor.MCP.Server
                 }
 
                 EditorUtility.DisplayDialog(
-                    "GameBooom MCP",
+                    "Funplay MCP",
                     $"Current version: {currentVersion}\nLatest published release: {latestVersion}\n\nYour local package version appears to be newer than the latest GitHub release.",
                     "OK");
             }
             catch (Exception ex)
             {
                 EditorUtility.DisplayDialog(
-                    "GameBooom MCP",
+                    "Funplay MCP",
                     $"Failed to check for updates:\n{ex.Message}",
                     "OK");
             }
@@ -119,7 +119,7 @@ namespace GameBooom.Editor.MCP.Server
                     return;
                 default:
                     EditorUtility.DisplayDialog(
-                        "GameBooom MCP",
+                        "Funplay MCP",
                         "Automatic updates are only supported for Git installs and unitypackage imports.\n\nOpening the release page instead.",
                         "OK");
                     Application.OpenURL(string.IsNullOrEmpty(latestRelease.html_url) ? DefaultReleasesUrl : latestRelease.html_url);
@@ -134,7 +134,7 @@ namespace GameBooom.Editor.MCP.Server
 
             EditorUtility.ClearProgressBar();
             EditorUtility.DisplayDialog(
-                "GameBooom MCP",
+                "Funplay MCP",
                 $"Git update started.\n\nSource: {gitReference}\n\nUnity Package Manager will re-fetch the package. The editor may recompile and reload during the update.",
                 "OK");
         }
@@ -147,11 +147,11 @@ namespace GameBooom.Editor.MCP.Server
                 throw new InvalidOperationException("The latest release does not contain a downloadable .unitypackage asset.");
             }
 
-            var tempDirectory = Path.Combine(Path.GetTempPath(), "GameBooomMCP");
+            var tempDirectory = Path.Combine(Path.GetTempPath(), "FunplayMCP");
             Directory.CreateDirectory(tempDirectory);
 
             var safeFileName = SanitizeFileName(string.IsNullOrEmpty(primaryAsset.name)
-                ? $"GameBooomMCP-v{NormalizeVersion(latestVersion)}.unitypackage"
+                ? $"FunplayMCP-v{NormalizeVersion(latestVersion)}.unitypackage"
                 : primaryAsset.name);
             var tempPackagePath = Path.Combine(tempDirectory, safeFileName);
 
@@ -159,13 +159,13 @@ namespace GameBooom.Editor.MCP.Server
             {
                 await DownloadFileAsync(primaryAsset.browser_download_url, tempPackagePath, primaryAsset.name);
 
-                EditorUtility.DisplayProgressBar("GameBooom MCP", $"Importing {safeFileName}...", 0.95f);
+                EditorUtility.DisplayProgressBar("Funplay MCP", $"Importing {safeFileName}...", 0.95f);
                 AssetDatabase.ImportPackage(tempPackagePath, false);
                 AssetDatabase.Refresh();
 
                 EditorUtility.ClearProgressBar();
                 EditorUtility.DisplayDialog(
-                    "GameBooom MCP",
+                    "Funplay MCP",
                     $"Imported {safeFileName}.\n\nLatest version: {latestVersion}",
                     "OK");
             }
@@ -181,7 +181,7 @@ namespace GameBooom.Editor.MCP.Server
             using (var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbGET))
             {
                 request.timeout = 60;
-                request.SetRequestHeader("User-Agent", "GameBooom-Unity-MCP");
+                request.SetRequestHeader("User-Agent", "Funplay-Unity-MCP");
                 request.downloadHandler = new DownloadHandlerFile(destinationPath);
 
                 var operation = request.SendWebRequest();
@@ -192,7 +192,7 @@ namespace GameBooom.Editor.MCP.Server
                         progress = 0f;
 
                     EditorUtility.DisplayProgressBar(
-                        "GameBooom MCP",
+                        "Funplay MCP",
                         $"Downloading {assetName}...",
                         Mathf.Clamp01(0.55f + progress * 0.35f));
                     await Task.Delay(50);
@@ -210,7 +210,7 @@ namespace GameBooom.Editor.MCP.Server
             using (var request = UnityWebRequest.Get(LatestReleaseApiUrl))
             {
                 request.timeout = 15;
-                request.SetRequestHeader("User-Agent", "GameBooom-Unity-MCP");
+                request.SetRequestHeader("User-Agent", "Funplay-Unity-MCP");
                 request.SetRequestHeader("Accept", "application/vnd.github+json");
 
                 var operation = request.SendWebRequest();
@@ -219,7 +219,7 @@ namespace GameBooom.Editor.MCP.Server
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogWarning($"[GameBooom MCP] Update check failed: {request.error}");
+                    Debug.LogWarning($"[Funplay MCP] Update check failed: {request.error}");
                     return null;
                 }
 
@@ -343,7 +343,7 @@ namespace GameBooom.Editor.MCP.Server
         private static string SanitizeFileName(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
-                return "GameBooomMCP.unitypackage";
+                return "FunplayMCP.unitypackage";
 
             var sanitized = fileName;
             var invalidCharacters = Path.GetInvalidFileNameChars();

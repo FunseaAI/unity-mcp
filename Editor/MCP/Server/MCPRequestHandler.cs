@@ -32,7 +32,7 @@ namespace GameBooom.Editor.MCP.Server
             _executionBridge = executionBridge ?? throw new ArgumentNullException(nameof(executionBridge));
             _resourceProvider = resourceProvider ?? throw new ArgumentNullException(nameof(resourceProvider));
             _promptProvider = promptProvider ?? throw new ArgumentNullException(nameof(promptProvider));
-            _serverName = string.IsNullOrWhiteSpace(serverName) ? "GameBooom MCP Server" : serverName;
+            _serverName = string.IsNullOrWhiteSpace(serverName) ? "Funplay MCP Server" : serverName;
             _serverVersion = string.IsNullOrWhiteSpace(serverVersion) ? "0.0.0" : serverVersion;
         }
 
@@ -46,7 +46,7 @@ namespace GameBooom.Editor.MCP.Server
                 if (request.JsonRpc != "2.0")
                     return CreateErrorResponse(request.Id, -32600, "Invalid Request: jsonrpc must be '2.0'");
 
-                Debug.Log($"[GameBooom MCP Server] Handling request: {request.Method}");
+                Debug.Log($"[Funplay MCP Server] Handling request: {request.Method}");
 
                 return request.Method switch
                 {
@@ -66,7 +66,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error handling request: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[Funplay MCP Server] Error handling request: {ex.Message}\n{ex.StackTrace}");
                 return CreateErrorResponse(request?.Id, -32603, $"Internal error: {ex.Message}");
             }
         }
@@ -89,14 +89,14 @@ namespace GameBooom.Editor.MCP.Server
                 }
             };
 
-            Debug.Log("[GameBooom MCP Server] Initialized successfully");
+            Debug.Log("[Funplay MCP Server] Initialized successfully");
             return new MCPResponse { Id = request.Id, Result = result };
         }
 
         private MCPResponse HandleToolsList(MCPRequest request)
         {
             var tools = _toolExporter.ExportTools();
-            Debug.Log($"[GameBooom MCP Server] Returning {tools.Count} tools");
+            Debug.Log($"[Funplay MCP Server] Returning {tools.Count} tools");
 
             return new MCPResponse
             {
@@ -116,7 +116,7 @@ namespace GameBooom.Editor.MCP.Server
                     ? args
                     : new Dictionary<string, object>();
 
-                Debug.Log($"[GameBooom MCP Server] Calling tool: {toolName}");
+                Debug.Log($"[Funplay MCP Server] Calling tool: {toolName}");
                 var result = await _executionBridge.ExecuteToolAsync(toolName, arguments, ct);
 
                 return new MCPResponse
@@ -130,7 +130,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error executing tool: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error executing tool: {ex.Message}");
                 return CreateErrorResponse(request.Id, -32603, $"Tool execution failed: {ex.Message}");
             }
         }

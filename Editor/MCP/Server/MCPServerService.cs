@@ -71,13 +71,13 @@ namespace GameBooom.Editor.MCP.Server
         {
             if (_disposed)
             {
-                Debug.LogWarning("[GameBooom MCP Server] Cannot start: service is disposed");
+                Debug.LogWarning("[Funplay MCP Server] Cannot start: service is disposed");
                 return false;
             }
 
             if (_isRunning)
             {
-                Debug.Log("[GameBooom MCP Server] Server is already running");
+                Debug.Log("[Funplay MCP Server] Server is already running");
                 return true;
             }
 
@@ -85,7 +85,7 @@ namespace GameBooom.Editor.MCP.Server
             {
                 Port = _settings.MCPServerPort;
                 _toolExportProfileSetting = _settings.MCPToolExportProfile;
-                Debug.Log("[GameBooom MCP Server] Starting server...");
+                Debug.Log("[Funplay MCP Server] Starting server...");
 
                 _transport = new HttpMCPTransport(Port);
                 var toolExporter = new MCPToolExporter(_settings);
@@ -97,7 +97,7 @@ namespace GameBooom.Editor.MCP.Server
                     executionBridge,
                     _resourceProvider,
                     promptProvider,
-                    "GameBooom MCP Server - " + Application.productName,
+                    "Funplay MCP Server - " + Application.productName,
                     PackageVersionUtility.CurrentVersion);
 
                 _transport.OnRequestReceived += HandleRequestReceived;
@@ -106,18 +106,18 @@ namespace GameBooom.Editor.MCP.Server
                 if (started)
                 {
                     _isRunning = true;
-                    Debug.Log($"[GameBooom] MCP Server started on http://127.0.0.1:{Port}/ 🚀 If this tool saves you time, please consider giving it a ⭐ on GitHub: https://github.com/FunseaAI/unity-mcp");
+                    Debug.Log($"[Funplay] MCP Server started on http://127.0.0.1:{Port}/ 🚀 If this tool saves you time, please consider giving it a ⭐ on GitHub: https://github.com/FunplayAI/funplay-unity-mcp");
                     ExternalSyncRecoveryTracker.TryCompletePendingRecovery();
                     CheckForInterruptedExecution();
                     return true;
                 }
 
-                Debug.LogError("[GameBooom MCP Server] Failed to start transport");
+                Debug.LogError("[Funplay MCP Server] Failed to start transport");
                 return false;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Failed to start: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogError($"[Funplay MCP Server] Failed to start: {ex.Message}\n{ex.StackTrace}");
                 return false;
             }
         }
@@ -128,7 +128,7 @@ namespace GameBooom.Editor.MCP.Server
 
             try
             {
-                Debug.Log("[GameBooom MCP Server] Stopping server...");
+                Debug.Log("[Funplay MCP Server] Stopping server...");
 
                 if (_transport != null)
                 {
@@ -142,11 +142,11 @@ namespace GameBooom.Editor.MCP.Server
                 _resourceProvider?.Dispose();
                 _resourceProvider = null;
                 _isRunning = false;
-                Debug.Log("[GameBooom] MCP Server stopped");
+                Debug.Log("[Funplay] MCP Server stopped");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error stopping server: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error stopping server: {ex.Message}");
             }
         }
 
@@ -160,7 +160,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error handling request: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error handling request: {ex.Message}");
                 sendResponse(new MCPResponse
                 {
                     Id = request?.Id,
@@ -178,7 +178,7 @@ namespace GameBooom.Editor.MCP.Server
 
             if ((portChanged || profileChanged) && _isRunning)
             {
-                Debug.Log("[GameBooom MCP Server] Server settings changed, restarting MCP transport...");
+                Debug.Log("[Funplay MCP Server] Server settings changed, restarting MCP transport...");
                 Port = _settings.MCPServerPort;
                 _toolExportProfileSetting = _settings.MCPToolExportProfile;
                 ScheduleRestart();
@@ -219,7 +219,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Failed while restarting after settings change: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Failed while restarting after settings change: {ex.Message}");
                 _restartInProgress = false;
             }
         }
@@ -334,9 +334,9 @@ namespace GameBooom.Editor.MCP.Server
             InteractionLog.Add(toolName, status, summary);
 
             if (status == MCPToolCallStatus.Success)
-                Debug.Log($"[GameBooom MCP Server] Recovery completed for '{toolName}'. {summary}");
+                Debug.Log($"[Funplay MCP Server] Recovery completed for '{toolName}'. {summary}");
             else
-                Debug.LogWarning($"[GameBooom MCP Server] Recovery detected for '{toolName}'. {summary}");
+                Debug.LogWarning($"[Funplay MCP Server] Recovery detected for '{toolName}'. {summary}");
         }
 
         private static bool IsErrorResult(string scriptResult)

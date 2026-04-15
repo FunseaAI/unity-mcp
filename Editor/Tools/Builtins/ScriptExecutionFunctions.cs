@@ -50,7 +50,7 @@ namespace GameBooom.Editor.Tools.Builtins
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] ExecuteCode failed: {ex.Message}");
+                Debug.LogError($"[Funplay] ExecuteCode failed: {ex.Message}");
                 return $"Error: {ex.Message}";
             }
         }
@@ -196,7 +196,7 @@ namespace GameBooom.Editor.Tools.Builtins
                 catch (TargetInvocationException ex)
                 {
                     var inner = ex.InnerException ?? ex;
-                    Debug.LogError($"[GameBooom] Script runtime error: {inner.Message}\n{inner.StackTrace}");
+                    Debug.LogError($"[Funplay] Script runtime error: {inner.Message}\n{inner.StackTrace}");
                     return $"Runtime error: {inner.Message}\n{inner.StackTrace}";
                 }
             }

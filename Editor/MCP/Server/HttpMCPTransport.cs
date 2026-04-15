@@ -46,12 +46,12 @@ namespace GameBooom.Editor.MCP.Server
 
                 _ = Task.Run(() => ListenLoopAsync(_cts.Token), _cts.Token);
 
-                Debug.Log($"[GameBooom MCP Server] HTTP transport started on http://127.0.0.1:{_port}/");
+                Debug.Log($"[Funplay MCP Server] HTTP transport started on http://127.0.0.1:{_port}/");
                 return Task.FromResult(true);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Failed to start HTTP transport: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Failed to start HTTP transport: {ex.Message}");
                 _isRunning = false;
                 return Task.FromResult(false);
             }
@@ -66,11 +66,11 @@ namespace GameBooom.Editor.MCP.Server
                 _listener?.Stop();
                 _listener?.Close();
                 _isRunning = false;
-                Debug.Log("[GameBooom MCP Server] HTTP transport stopped");
+                Debug.Log("[Funplay MCP Server] HTTP transport stopped");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error stopping HTTP transport: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error stopping HTTP transport: {ex.Message}");
             }
             return Task.CompletedTask;
         }
@@ -95,7 +95,7 @@ namespace GameBooom.Editor.MCP.Server
                 catch (Exception ex)
                 {
                     if (!ct.IsCancellationRequested)
-                        Debug.LogError($"[GameBooom MCP Server] Error in listen loop: {ex.Message}");
+                        Debug.LogError($"[Funplay MCP Server] Error in listen loop: {ex.Message}");
                     break;
                 }
             }
@@ -163,7 +163,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Error handling request: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Error handling request: {ex.Message}");
                 await SendErrorResponseAsync(context.Response, request?.Id, -32603, $"Internal error: {ex.Message}");
             }
         }
@@ -180,7 +180,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Failed to parse request: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Failed to parse request: {ex.Message}");
                 return null;
             }
         }
@@ -202,7 +202,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] JSON parse error: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] JSON parse error: {ex.Message}");
                 return null;
             }
         }
@@ -228,7 +228,7 @@ namespace GameBooom.Editor.MCP.Server
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom MCP Server] Failed to send response: {ex.Message}");
+                Debug.LogError($"[Funplay MCP Server] Failed to send response: {ex.Message}");
             }
         }
 

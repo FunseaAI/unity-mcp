@@ -77,7 +77,7 @@ namespace GameBooom.Editor.MCP.Server
                     _stateController.SetState(GameBooomState.ExecutingFunction);
                     DomainReloadHandler.SavePendingFunction(functionCall);
 
-                    Debug.Log($"[GameBooom MCP Server] Executing tool: {toolName}");
+                    Debug.Log($"[Funplay MCP Server] Executing tool: {toolName}");
                     var result = await _invoker.InvokeAsync(functionCall);
                     DomainReloadHandler.ClearPendingFunction();
                     _stateController.ReturnToPreviousState();
@@ -98,7 +98,7 @@ namespace GameBooom.Editor.MCP.Server
                     DomainReloadHandler.ClearPendingFunction();
                     _stateController.ClearState();
                     var exError = $"Error: {ex.Message}";
-                    Debug.LogError($"[GameBooom MCP Server] Error executing tool '{toolName}': {ex.Message}\n{ex.StackTrace}");
+                    Debug.LogError($"[Funplay MCP Server] Error executing tool '{toolName}': {ex.Message}\n{ex.StackTrace}");
                     _interactionLog?.Add(toolName, MCPToolCallStatus.Error, exError);
                     return exError;
                 }

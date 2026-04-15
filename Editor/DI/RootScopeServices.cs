@@ -29,7 +29,7 @@ namespace GameBooom.Editor.DI
                 var services = new ServiceCollection();
                 services.RegisterServices();
                 _serviceProvider = services.BuildServiceProvider();
-                Debug.Log("[GameBooom] Root services initialized.");
+                Debug.Log("[Funplay] Root services initialized.");
 
                 var unityLogsRepository =
                     _serviceProvider.GetService(typeof(UnityLogsRepository)) as UnityLogsRepository;
@@ -47,7 +47,7 @@ namespace GameBooom.Editor.DI
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] Failed to initialize root services: {ex}");
+                Debug.LogError($"[Funplay] Failed to initialize root services: {ex}");
             }
         }
 
@@ -61,7 +61,7 @@ namespace GameBooom.Editor.DI
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[GameBooom] Error disposing root services: {ex}");
+                Debug.LogError($"[Funplay] Error disposing root services: {ex}");
             }
         }
     }

@@ -36,7 +36,7 @@ namespace GameBooom.Editor.MCP.Server
                     : string.Compare(left.function.name, right.function.name, StringComparison.OrdinalIgnoreCase);
             });
 
-            Debug.Log($"[GameBooom MCP Server] Exporting tools with profile '{MCPToolExportPolicy.ToSettingValue(profile)}'");
+            Debug.Log($"[Funplay MCP Server] Exporting tools with profile '{MCPToolExportPolicy.ToSettingValue(profile)}'");
 
             foreach (var tool in tools)
             {

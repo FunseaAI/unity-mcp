@@ -111,7 +111,7 @@ namespace GameBooom.Editor.MCP.Client
                     ["capabilities"] = new Dictionary<string, object>(),
                     ["clientInfo"] = new Dictionary<string, object>
                     {
-                        ["name"] = "GameBooom",
+                        ["name"] = "Funplay",
                         ["version"] = "1.0.0"
                     }
                 });
@@ -148,7 +148,7 @@ namespace GameBooom.Editor.MCP.Client
                 {
                     sb.AppendLine(line);
                     _stderrOutput = sb.ToString();
-                    UnityEngine.Debug.Log($"[GameBooom MCP] stderr: {line}");
+                    UnityEngine.Debug.Log($"[Funplay MCP] stderr: {line}");
                 }
             }
             catch { /* Process ended or stream closed */ }
@@ -282,7 +282,7 @@ namespace GameBooom.Editor.MCP.Client
 
         private void Log(string message)
         {
-            UnityEngine.Debug.Log($"[GameBooom MCP] {message}");
+            UnityEngine.Debug.Log($"[Funplay MCP] {message}");
             OnLog?.Invoke(message);
         }
 
