@@ -1,15 +1,15 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using GameBooom.Editor.Api;
-using GameBooom.Editor.Api.Models;
-using GameBooom.Editor.Settings;
+using Funplay.Editor.Api;
+using Funplay.Editor.Api.Models;
+using Funplay.Editor.Settings;
 
-namespace GameBooom.Editor.MCP.Client
+namespace Funplay.Editor.MCP.Client
 {
     /// <summary>
     /// Manages the lifecycle of an external MCP server connection:

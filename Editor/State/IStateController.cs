@@ -1,16 +1,16 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 
-namespace GameBooom.Editor.State
+namespace Funplay.Editor.State
 {
     internal interface IStateController
     {
-        GameBooomState CurrentState { get; }
-        event Action<GameBooomState> OnStateChanged;
+        FunplayState CurrentState { get; }
+        event Action<FunplayState> OnStateChanged;
         event Action OnCancelRequested;
 
-        void SetState(GameBooomState state);
+        void SetState(FunplayState state);
         void ReturnToPreviousState();
         void ClearState();
         void RequestCancel();

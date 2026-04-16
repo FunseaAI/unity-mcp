@@ -1,14 +1,14 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
-using GameBooom.Editor.MCP.Server;
-using GameBooom.Editor.Services;
-using GameBooom.Editor.Services.UnityLogs;
-using GameBooom.Editor.Settings;
-using GameBooom.Editor.State;
-using GameBooom.Editor.Threading;
-using GameBooom.Editor.Tools;
+using Funplay.Editor.MCP.Server;
+using Funplay.Editor.Services;
+using Funplay.Editor.Services.UnityLogs;
+using Funplay.Editor.Settings;
+using Funplay.Editor.State;
+using Funplay.Editor.Threading;
+using Funplay.Editor.Tools;
 
-namespace GameBooom.Editor.DI
+namespace Funplay.Editor.DI
 {
     internal static class ServiceRegistration
     {

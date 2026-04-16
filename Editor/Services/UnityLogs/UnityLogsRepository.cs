@@ -1,11 +1,11 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace GameBooom.Editor.Services.UnityLogs
+namespace Funplay.Editor.Services.UnityLogs
 {
     internal class UnityLogsRepository : IDisposable
     {
@@ -89,8 +89,8 @@ namespace GameBooom.Editor.Services.UnityLogs
             if (string.IsNullOrEmpty(message))
                 return;
 
-            if (message.StartsWith("[GameBooom]", StringComparison.Ordinal) ||
-                message.StartsWith("[GameBooom MCP Server]", StringComparison.Ordinal) ||
+            if (message.StartsWith("[Funplay]", StringComparison.Ordinal) ||
+                message.StartsWith("[Funplay MCP Server]", StringComparison.Ordinal) ||
                 message.StartsWith("[Funplay]", StringComparison.Ordinal) ||
                 message.StartsWith("[Funplay MCP Server]", StringComparison.Ordinal))
             {

@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
     /// <summary>
     /// Simple JSON serializer/deserializer for MCP server.

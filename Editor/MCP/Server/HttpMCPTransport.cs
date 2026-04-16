@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
     /// <summary>
     /// HTTP transport implementation for MCP using System.Net.HttpListener.

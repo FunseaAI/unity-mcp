@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +9,7 @@ using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Performance")]
     internal static class PerformanceFunctions

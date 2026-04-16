@@ -1,8 +1,8 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System.Collections.Generic;
-using GameBooom.Editor.Api.Models;
+using Funplay.Editor.Api.Models;
 
-namespace GameBooom.Editor.Tools
+namespace Funplay.Editor.Tools
 {
     /// <summary>
     /// Converts LLM tool_call responses into FunctionCall objects.

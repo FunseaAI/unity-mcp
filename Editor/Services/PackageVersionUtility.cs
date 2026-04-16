@@ -1,11 +1,11 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor.PackageManager;
 using UnityEngine;
 
-namespace GameBooom.Editor.Services
+namespace Funplay.Editor.Services
 {
     internal static class PackageVersionUtility
     {

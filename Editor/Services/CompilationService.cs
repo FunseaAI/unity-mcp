@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Compilation;
 
-namespace GameBooom.Editor.Services
+namespace Funplay.Editor.Services
 {
     [InitializeOnLoad]
     internal class CompilationService : ICompilationService, IDisposable

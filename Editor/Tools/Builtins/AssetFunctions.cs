@@ -1,11 +1,11 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Asset")]
     internal static class AssetFunctions

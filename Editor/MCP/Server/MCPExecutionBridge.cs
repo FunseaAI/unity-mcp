@@ -1,20 +1,20 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using GameBooom.Editor.Settings;
-using GameBooom.Editor.State;
-using GameBooom.Editor.Threading;
-using GameBooom.Editor.Tools;
+using Funplay.Editor.Settings;
+using Funplay.Editor.State;
+using Funplay.Editor.Threading;
+using Funplay.Editor.Tools;
 using UnityEngine;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
     /// <summary>
-    /// Bridges MCP tool calls to GameBooom's FunctionInvokerController.
+    /// Bridges MCP tool calls to Funplay's FunctionInvokerController.
     /// Handles thread marshalling and approval workflow.
     /// </summary>
     internal class MCPExecutionBridge
@@ -74,7 +74,7 @@ namespace GameBooom.Editor.MCP.Server
                         method.GetCustomAttribute<ReadOnlyToolAttribute>() != null;
 
                     DomainReloadHandler.ResetResumeCounter();
-                    _stateController.SetState(GameBooomState.ExecutingFunction);
+                    _stateController.SetState(FunplayState.ExecutingFunction);
                     DomainReloadHandler.SavePendingFunction(functionCall);
 
                     Debug.Log($"[Funplay MCP Server] Executing tool: {toolName}");

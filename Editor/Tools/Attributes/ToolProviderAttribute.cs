@@ -1,7 +1,7 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 
-namespace GameBooom.Editor.Tools
+namespace Funplay.Editor.Tools
 {
     [AttributeUsage(AttributeTargets.Class)]
     internal class ToolProviderAttribute : Attribute

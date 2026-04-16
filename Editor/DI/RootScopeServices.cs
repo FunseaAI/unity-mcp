@@ -1,13 +1,13 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
-using GameBooom.Editor.MCP.Server;
-using GameBooom.Editor.Settings;
-using GameBooom.Editor.Services.UnityLogs;
+using Funplay.Editor.MCP.Server;
+using Funplay.Editor.Settings;
+using Funplay.Editor.Services.UnityLogs;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameBooom.Editor.DI
+namespace Funplay.Editor.DI
 {
     [InitializeOnLoad]
     internal static class RootScopeServices

@@ -1,16 +1,16 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using GameBooom.Editor.Services.UnityLogs;
+using Funplay.Editor.Services.UnityLogs;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace GameBooom.Editor.Services
+namespace Funplay.Editor.Services
 {
     internal class EditorContextBuilder : IEditorContextBuilder, IDisposable
     {

@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.IO;
@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Animation")]
     internal static class AnimationFunctions

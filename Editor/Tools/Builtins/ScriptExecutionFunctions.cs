@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections;
@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Script")]
     internal static class ScriptExecutionFunctions

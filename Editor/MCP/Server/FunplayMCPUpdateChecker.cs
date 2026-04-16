@@ -1,19 +1,19 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GameBooom.Editor.Services;
+using Funplay.Editor.Services;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityPackageInfo = UnityEditor.PackageManager.PackageInfo;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
-    internal static class GameBooomMCPUpdateChecker
+    internal static class FunplayMCPUpdateChecker
     {
         private const string PackageName = "com.gamebooom.unity.mcp";
         private const string PackageRoot = "Packages/com.gamebooom.unity.mcp";

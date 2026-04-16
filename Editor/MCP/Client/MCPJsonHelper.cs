@@ -1,10 +1,10 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System.Collections.Generic;
-using GameBooom.Editor.Api;
-using GameBooom.Editor.Api.Models;
+using Funplay.Editor.Api;
+using Funplay.Editor.Api.Models;
 
-namespace GameBooom.Editor.MCP.Client
+namespace Funplay.Editor.MCP.Client
 {
     /// <summary>
     /// Parses MCP JSON-RPC responses for tools/list and tools/call results.

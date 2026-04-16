@@ -1,16 +1,16 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using GameBooom.Editor.Services;
+using Funplay.Editor.Services;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
     internal class MCPResourceProvider : IDisposable
     {

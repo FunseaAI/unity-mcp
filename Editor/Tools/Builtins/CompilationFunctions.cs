@@ -1,21 +1,21 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Threading.Tasks;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
-using GameBooom.Editor.DI;
-using GameBooom.Editor.MCP.Server;
-using GameBooom.Editor.Services;
-using GameBooom.Editor.State;
+using Funplay.Editor.DI;
+using Funplay.Editor.MCP.Server;
+using Funplay.Editor.Services;
+using Funplay.Editor.State;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Compilation")]
     internal static class CompilationFunctions
     {
-        private const string ExternalSyncPendingKey = "GameBooom_ExternalSync_Pending";
-        private const string ExternalSyncStartedAtKey = "GameBooom_ExternalSync_StartedAt";
+        private const string ExternalSyncPendingKey = "Funplay_ExternalSync_Pending";
+        private const string ExternalSyncStartedAtKey = "Funplay_ExternalSync_StartedAt";
         private const double ExternalSyncRecoveryMaxAgeSeconds = 120;
 
         [Description("Force Unity to refresh and wait until script compilation is complete without blocking the editor thread. " +

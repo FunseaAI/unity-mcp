@@ -1,13 +1,13 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using GameBooom.Editor.Settings;
-using GameBooom.Editor.State;
-using GameBooom.Editor.Threading;
+using Funplay.Editor.Settings;
+using Funplay.Editor.State;
+using Funplay.Editor.Threading;
 
-namespace GameBooom.Editor.Tools
+namespace Funplay.Editor.Tools
 {
     /// <summary>
     /// Orchestrates function execution, invocation, and result collection.
@@ -57,7 +57,7 @@ namespace GameBooom.Editor.Tools
         /// </summary>
         public async Task<List<FunctionCall>> ExecuteAllAsync()
         {
-            _stateController.SetState(GameBooomState.ExecutingAllFunctions);
+            _stateController.SetState(FunplayState.ExecutingAllFunctions);
 
             var results = new List<FunctionCall>();
             var calls = new List<FunctionCall>();
@@ -96,7 +96,7 @@ namespace GameBooom.Editor.Tools
         {
             functionCall.SetState(FunctionState.Executing);
             DomainReloadHandler.ResetResumeCounter();
-            _stateController.SetState(GameBooomState.ExecutingFunction);
+            _stateController.SetState(FunplayState.ExecutingFunction);
             DomainReloadHandler.SavePendingFunction(functionCall);
 
             try

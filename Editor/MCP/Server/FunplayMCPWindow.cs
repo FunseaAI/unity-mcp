@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
@@ -6,12 +6,12 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using GameBooom.Editor.DI;
-using GameBooom.Editor.Settings;
+using Funplay.Editor.DI;
+using Funplay.Editor.Settings;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
-    internal class GameBooomMCPWindow : EditorWindow
+    internal class FunplayMCPWindow : EditorWindow
     {
         private ISettingsController _settingsController;
         private MCPServerService _mcpServer;
@@ -26,7 +26,7 @@ namespace GameBooom.Editor.MCP.Server
         [MenuItem("Funplay/MCP Server")]
         public static void ShowWindow()
         {
-            var window = GetWindow<GameBooomMCPWindow>("MCP Server");
+            var window = GetWindow<FunplayMCPWindow>("MCP Server");
             window.minSize = new Vector2(360, 400);
             window.Show();
         }

@@ -1,7 +1,7 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System.Collections.Generic;
 
-namespace GameBooom.Editor.Api.Models
+namespace Funplay.Editor.Api.Models
 {
     internal class ToolDefinition
     {

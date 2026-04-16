@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.IO;
@@ -8,13 +8,13 @@ using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEngine;
 
-namespace GameBooom.Editor.MCP
+namespace Funplay.Editor.MCP
 {
     [InitializeOnLoad]
     internal static class TempScriptRunner
     {
-        private const string PendingKey = "GameBooom_PendingExecution";
-        private const string ResultKey = "GameBooom_ExecutionResult";
+        private const string PendingKey = "Funplay_PendingExecution";
+        private const string ResultKey = "Funplay_ExecutionResult";
         private const string TempDirectory = "Assets/unity-mcp/Editor/Temp";
 
         private static StringBuilder _compilationErrors;
@@ -56,7 +56,7 @@ namespace GameBooom.Editor.MCP
             if (!Directory.Exists(TempDirectory))
                 return;
 
-            var files = Directory.GetFiles(TempDirectory, "GameBooom_TempScript_*.cs");
+            var files = Directory.GetFiles(TempDirectory, "Funplay_TempScript_*.cs");
             if (files.Length == 0)
                 return;
 

@@ -51,7 +51,8 @@ https://github.com/FunplayAI/funplay-unity-mcp.git
 
 **Menu: Funplay → MCP Server** to start the server.
 
-The server runs on `http://127.0.0.1:8765/` by default.
+The server starts on `http://127.0.0.1:8765/` by default.
+If that port is already occupied, it automatically picks another free local port and saves it to `UserSettings/FunplayMcpSettings.json`.
 
 ### 3. Configure Your AI Client
 
@@ -59,6 +60,7 @@ Use the built-in **One-Click MCP Configuration** in the `Funplay > MCP Server` w
 
 Select your target client, click **Configure**, and the package writes the recommended MCP config entry for you.
 
+If Unity had to pick a different port, use the endpoint shown in the MCP Server window.
 If you prefer to edit config files manually, use the examples below as fallback references:
 
 <details>
@@ -173,7 +175,8 @@ Open your AI client and try: *"Create a 3D platformer level with 5 floating plat
 ## Before You Start
 
 - This package is **Editor-only**. It does not add runtime components to your built game.
-- The MCP server listens on `http://127.0.0.1:8765/` by default.
+- The MCP server starts on `http://127.0.0.1:8765/` by default, but automatically falls back to another free local port if needed.
+- Local MCP server settings are stored in `UserSettings/FunplayMcpSettings.json`.
 - The package defaults to the `core` MCP tool profile to reduce tool-list noise for AI clients. `core` currently exposes 19 high-signal tools centered on `execute_code`, play mode control, input simulation, screenshots, performance inspection, logs, and compilation checks. Switch to `full` in the MCP Server window if you want all 79 tools exposed.
 - All exposed MCP tools run directly. There is no extra approval toggle.
 - **Menu: `Funplay > Check for Updates`** can refresh Git installs in place or download and import the latest `unitypackage` automatically.

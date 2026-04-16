@@ -1,9 +1,9 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace GameBooom.Editor.Api
+namespace Funplay.Editor.Api
 {
     /// <summary>
     /// Minimal JSON utility for MCP protocol communication.

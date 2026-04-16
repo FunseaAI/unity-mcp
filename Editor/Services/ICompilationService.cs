@@ -1,9 +1,9 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Threading.Tasks;
 
-namespace GameBooom.Editor.Services
+namespace Funplay.Editor.Services
 {
     internal interface ICompilationService
     {

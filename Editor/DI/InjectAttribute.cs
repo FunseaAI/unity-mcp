@@ -1,8 +1,8 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 
-namespace GameBooom.Editor.DI
+namespace Funplay.Editor.DI
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     internal sealed class InjectAttribute : Attribute

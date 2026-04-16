@@ -16,7 +16,8 @@ Use this checklist before publishing a new open-source release of Funplay MCP fo
 - [ ] Install the package from the Git URL
 - [ ] Open `Funplay > MCP Server`
 - [ ] Start the MCP server successfully
-- [ ] Confirm the default endpoint is reachable at `http://127.0.0.1:8765/`
+- [ ] Confirm the configured local endpoint is reachable from an MCP client
+- [ ] If port `8765` is occupied, verify the server picks a free port and writes it to `UserSettings/FunplayMcpSettings.json`
 - [ ] Run a read-only tool such as `get_scene_info`
 - [ ] Run a scene-changing tool such as `create_game_object`
 - [ ] Verify interaction logs appear in the MCP Server window

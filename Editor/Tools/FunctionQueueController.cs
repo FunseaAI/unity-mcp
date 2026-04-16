@@ -1,8 +1,8 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Collections.Generic;
 
-namespace GameBooom.Editor.Tools
+namespace Funplay.Editor.Tools
 {
     /// <summary>
     /// FIFO queue for pending function calls.

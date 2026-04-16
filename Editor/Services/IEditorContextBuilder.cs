@@ -1,6 +1,6 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
-namespace GameBooom.Editor.Services
+namespace Funplay.Editor.Services
 {
     internal interface IEditorContextBuilder
     {

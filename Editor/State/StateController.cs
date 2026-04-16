@@ -1,22 +1,22 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
 
-namespace GameBooom.Editor.State
+namespace Funplay.Editor.State
 {
     internal class StateController : IStateController
     {
-        private readonly Stack<GameBooomState> _stateHistory = new Stack<GameBooomState>();
-        private GameBooomState _currentState = GameBooomState.Initialized;
+        private readonly Stack<FunplayState> _stateHistory = new Stack<FunplayState>();
+        private FunplayState _currentState = FunplayState.Initialized;
 
-        public GameBooomState CurrentState => _currentState;
-        public bool IsInitialized => _currentState == GameBooomState.Initialized;
+        public FunplayState CurrentState => _currentState;
+        public bool IsInitialized => _currentState == FunplayState.Initialized;
 
-        public event Action<GameBooomState> OnStateChanged;
+        public event Action<FunplayState> OnStateChanged;
         public event Action OnCancelRequested;
 
-        public void SetState(GameBooomState state)
+        public void SetState(FunplayState state)
         {
             if (_currentState == state) return;
 
@@ -29,7 +29,7 @@ namespace GameBooom.Editor.State
         {
             _currentState = _stateHistory.Count > 0
                 ? _stateHistory.Pop()
-                : GameBooomState.Initialized;
+                : FunplayState.Initialized;
 
             OnStateChanged?.Invoke(_currentState);
         }
@@ -37,7 +37,7 @@ namespace GameBooom.Editor.State
         public void ClearState()
         {
             _stateHistory.Clear();
-            _currentState = GameBooomState.Initialized;
+            _currentState = FunplayState.Initialized;
             OnStateChanged?.Invoke(_currentState);
         }
 

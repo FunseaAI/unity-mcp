@@ -1,10 +1,10 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameBooom.Editor.DI
+namespace Funplay.Editor.DI
 {
     /// <summary>
     /// Manages the per-window service scope. Only one window scope exists at a time.

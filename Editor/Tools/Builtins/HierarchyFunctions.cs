@@ -1,11 +1,11 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Text;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Hierarchy")]
     internal static class HierarchyFunctions

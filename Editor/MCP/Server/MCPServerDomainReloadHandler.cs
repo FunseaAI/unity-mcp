@@ -1,12 +1,12 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
-using GameBooom.Editor.Settings;
+using Funplay.Editor.Settings;
 using UnityEditor;
-using GameBooom.Editor.DI;
+using Funplay.Editor.DI;
 using UnityEngine;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
     /// <summary>
     /// Handles Unity domain reload for the MCP server.
@@ -15,8 +15,8 @@ namespace GameBooom.Editor.MCP.Server
     [InitializeOnLoad]
     internal static class MCPServerDomainReloadHandler
     {
-        private const string WasRunningKey = "GameBooom_MCPServer_WasRunning";
-        private const string PortKey = "GameBooom_MCPServer_Port";
+        private const string WasRunningKey = "Funplay_MCPServer_WasRunning";
+        private const string PortKey = "Funplay_MCPServer_Port";
 
         static MCPServerDomainReloadHandler()
         {

@@ -1,8 +1,8 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using UnityEditor;
 
-namespace GameBooom.Editor.Services
+namespace Funplay.Editor.Services
 {
     internal class EditorStateService : IEditorStateService
     {

@@ -1,13 +1,13 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
-using GameBooom.Editor.MCP.Server;
-using GameBooom.Editor.Tools;
+using Funplay.Editor.MCP.Server;
+using Funplay.Editor.Tools;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameBooom.Editor.State
+namespace Funplay.Editor.State
 {
     /// <summary>
     /// Saves and restores running state across Unity domain reloads (triggered by script recompilation).
@@ -15,12 +15,12 @@ namespace GameBooom.Editor.State
     /// </summary>
     internal static class DomainReloadHandler
     {
-        private const string StateKey = "GameBooom_ReloadState";
-        private const string TimestampKey = "GameBooom_ReloadTimestamp";
-        private const string PendingFunctionKey = "GameBooom_ReloadPendingFunction";
-        private const string LastRecoveryInfoKey = "GameBooom_LastRecoveryInfo";
-        private const string ResumeCountKey = "GameBooom_ConsecutiveResumeCount";
-        private const string LastResumeTimestampKey = "GameBooom_LastResumeTimestamp";
+        private const string StateKey = "Funplay_ReloadState";
+        private const string TimestampKey = "Funplay_ReloadTimestamp";
+        private const string PendingFunctionKey = "Funplay_ReloadPendingFunction";
+        private const string LastRecoveryInfoKey = "Funplay_LastRecoveryInfo";
+        private const string ResumeCountKey = "Funplay_ConsecutiveResumeCount";
+        private const string LastResumeTimestampKey = "Funplay_LastResumeTimestamp";
 
         private const int MaxConsecutiveResumes = 5;
         private const double ResumeCountResetSeconds = 120;
@@ -41,7 +41,7 @@ namespace GameBooom.Editor.State
             };
         }
 
-        public static void SaveState(GameBooomState state)
+        public static void SaveState(FunplayState state)
         {
             SessionState.SetString(StateKey, state.ToString());
             SessionState.SetString(TimestampKey, DateTime.Now.ToString("O"));
@@ -180,10 +180,10 @@ namespace GameBooom.Editor.State
 
             if (string.IsNullOrEmpty(stateStr)) return null;
 
-            if (!Enum.TryParse<GameBooomState>(stateStr, out var state))
+            if (!Enum.TryParse<FunplayState>(stateStr, out var state))
                 return null;
 
-            if (state == GameBooomState.Initialized)
+            if (state == FunplayState.Initialized)
                 return null;
 
             // Discard if too old (> 120 seconds)
@@ -253,7 +253,7 @@ namespace GameBooom.Editor.State
 
         internal class InterruptedState
         {
-            public GameBooomState State;
+            public FunplayState State;
             public DateTime Timestamp;
             public PendingFunctionInfo PendingFunction;
 
@@ -264,8 +264,8 @@ namespace GameBooom.Editor.State
 
                 switch (State)
                 {
-                    case GameBooomState.ExecutingFunction:
-                    case GameBooomState.ExecutingAllFunctions:
+                    case FunplayState.ExecutingFunction:
+                    case FunplayState.ExecutingAllFunctions:
                         return "Function execution was interrupted by script recompilation.";
                     default:
                         return "Operation was interrupted by script recompilation.";

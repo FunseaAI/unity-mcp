@@ -1,9 +1,9 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Threading.Tasks;
 
-namespace GameBooom.Editor.Threading
+namespace Funplay.Editor.Threading
 {
     internal interface IEditorThreadHelper : IDisposable
     {

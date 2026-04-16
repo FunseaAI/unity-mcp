@@ -1,4 +1,4 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace GameBooom.Editor.Tools
+namespace Funplay.Editor.Tools
 {
     /// <summary>
     /// Builds a UIElements panel that lists all discovered tools grouped by category,

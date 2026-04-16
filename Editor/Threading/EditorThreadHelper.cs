@@ -1,13 +1,13 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
-using GameBooom.Editor.Services;
+using Funplay.Editor.Services;
 
-namespace GameBooom.Editor.Threading
+namespace Funplay.Editor.Threading
 {
     internal class EditorThreadHelper : IEditorThreadHelper
     {

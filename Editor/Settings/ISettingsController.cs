@@ -1,8 +1,8 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 
-namespace GameBooom.Editor.Settings
+namespace Funplay.Editor.Settings
 {
     internal interface ISettingsController
     {

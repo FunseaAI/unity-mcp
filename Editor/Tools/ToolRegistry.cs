@@ -1,12 +1,12 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GameBooom.Editor.Api.Models;
+using Funplay.Editor.Api.Models;
 using UnityEngine;
 
-namespace GameBooom.Editor.Tools
+namespace Funplay.Editor.Tools
 {
     /// <summary>
     /// Scans assemblies for classes marked with [ToolProvider]

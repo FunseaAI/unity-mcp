@@ -1,6 +1,6 @@
 {
-    "name": "GameBooom.Editor",
-    "rootNamespace": "GameBooom.Editor",
+    "name": "Funplay.Editor",
+    "rootNamespace": "Funplay.Editor",
     "references": [
         "Unity.Newtonsoft.Json",
         "Unity.InputSystem"

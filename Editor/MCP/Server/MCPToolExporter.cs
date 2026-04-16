@@ -1,15 +1,15 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Collections.Generic;
-using GameBooom.Editor.Tools;
-using GameBooom.Editor.Settings;
+using Funplay.Editor.Tools;
+using Funplay.Editor.Settings;
 using UnityEngine;
 
-namespace GameBooom.Editor.MCP.Server
+namespace Funplay.Editor.MCP.Server
 {
     /// <summary>
-    /// Exports GameBooom tool definitions to MCP tool schema format.
+    /// Exports Funplay tool definitions to MCP tool schema format.
     /// </summary>
     internal class MCPToolExporter
     {
@@ -56,7 +56,7 @@ namespace GameBooom.Editor.MCP.Server
         }
 
         private Dictionary<string, object> ConvertParametersToJsonSchema(
-            GameBooom.Editor.Api.Models.ToolParametersDef parameters)
+            Funplay.Editor.Api.Models.ToolParametersDef parameters)
         {
             var properties = new Dictionary<string, object>();
 

@@ -1,15 +1,15 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 using System;
 using System.Reflection;
 using System.Text;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
-using GameBooom.Editor.DI;
-using GameBooom.Editor.Services.UnityLogs;
-using GameBooom.Editor.Tools;
+using Funplay.Editor.DI;
+using Funplay.Editor.Services.UnityLogs;
+using Funplay.Editor.Tools;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameBooom.Editor.Tools.Builtins
+namespace Funplay.Editor.Tools.Builtins
 {
     [ToolProvider("Visual")]
     internal static class VisualFeedbackFunctions
@@ -167,7 +167,7 @@ namespace GameBooom.Editor.Tools.Builtins
                     string message = (string)messageField.GetValue(entry);
 
                     if (message != null &&
-                        (message.StartsWith("[GameBooom", StringComparison.Ordinal) ||
+                        (message.StartsWith("[Funplay", StringComparison.Ordinal) ||
                          message.StartsWith("[Funplay", StringComparison.Ordinal))) continue;
 
                     // Classify: ERROR (bits 0,1,4,8,11), WARN (bits 9,12), LOG (others)

@@ -1,9 +1,9 @@
-// Copyright (C) GameBooom. Licensed under MIT.
+// Copyright (C) Funplay. Licensed under MIT.
 
 using System;
 using System.Reflection;
 
-namespace GameBooom.Editor.DI
+namespace Funplay.Editor.DI
 {
     internal static class InjectionExtensions
     {

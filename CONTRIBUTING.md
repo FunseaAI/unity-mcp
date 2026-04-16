@@ -14,7 +14,7 @@ Thanks for your interest in contributing! Here's how to get started.
 
 - C# with 4-space indentation (see `.editorconfig`)
 - All classes are `internal` (editor-only plugin)
-- Root namespace remains `GameBooom.Editor` for compatibility
+- Use the `Funplay.Editor` namespace family for editor code
 - Comments in Chinese or English are both fine
 
 ## Adding a New Tool
