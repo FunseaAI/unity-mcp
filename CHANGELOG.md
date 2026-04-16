@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9] - 2026-04-16
+
+### Fixed
+- Fixed one-click MCP configuration paths on Windows by resolving the real user profile directory
+- Fixed VS Code one-click configuration to use the platform-specific user config directory with a macOS fallback
+- Ensured one-click MCP configuration writes the currently running server port after automatic port fallback
+
 ## [0.1.8] - 2026-04-15
 
 ### Changed
