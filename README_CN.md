@@ -192,7 +192,7 @@ url = "http://127.0.0.1:8765/"
 
 ## 能力概览
 
-- **`execute_code` 主工具优先** — 核心体验围绕一个高灵活度 C# 执行工具构建，适合复杂编辑器/运行态编排
+- **`execute_code` 主工具优先** — 核心体验围绕一个内存 C# 执行工具构建，适合复杂编辑器/运行态编排。详见下方 [`execute_code`：内存 C# 执行](#execute_code内存-c-执行)。
 - **Play Mode 自动化闭环** — 进入运行模式、模拟键鼠输入、截图、查看日志、验证行为都能在同一 MCP 会话里完成
 - **内建项目上下文** — 直接提供项目状态、当前场景、选择对象、编译错误、控制台输出和 MCP 交互记录资源
 - **默认聚焦，必要时全量** — 默认 `core` 工具集更利于 AI 选工具，需要时可切到 `full` 暴露全部 91 个工具
@@ -212,6 +212,37 @@ url = "http://127.0.0.1:8765/"
 - **项目 Skills 管理器** — 为支持的 AI 客户端配置项目级 skills，目前安装默认的 `unity-mcp-workflow` skill
 - **插件设置** — 排查 MCP 连接或工具执行问题时，可开关详细 debug 日志
 - **厂商无关** — 兼容任意支持 MCP 的 AI 客户端：Claude Code、Cursor、Windsurf、Codex、VS Code Copilot 等
+
+## `execute_code`：内存 C# 执行
+
+`execute_code` 是 Funplay MCP for Unity 的核心工具。AI 写一段 C#，**在内存中编译**，在编辑器线程直接执行——agent 拿到 Unity Editor 与 Runtime 的全套 API，但完全不需要往磁盘写文件。
+
+- **零落盘编译** —— 通过 CodeDom 编译成内存程序集、反射执行。`Assets/` 下不会多出 `.cs` 文件，不会触发 domain reload，除非 snippet 自己显式改，否则项目状态不动。
+- **运行前自动就绪** —— 每次调用都会先刷新 AssetDatabase 并等待 pending compilation 完成，外部文件编辑会被自动拾取，不需要额外 `request_recompile`。
+- **自动 Undo + 结构化日志（推荐模板）** —— 实现 `IFunplayCommand`，用注入的 `ExecutionContext`：所有新建/修改/销毁的对象都自动进 editor Undo，改动列表也会回传给 agent。
+
+```csharp
+using UnityEngine;
+using UnityEditor;
+using Funplay.Editor.Tools.Scripting;
+
+public class CommandScript : IFunplayCommand
+{
+    public void Execute(ExecutionContext ctx)
+    {
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        ctx.RegisterObjectCreation(go);          // 自动 Undo + 追踪
+        ctx.Log("Created {0}", go.name);
+        ctx.ReturnValue = new { instanceId = go.GetInstanceID() };
+    }
+}
+```
+
+返回里带 `{ logs, created, modified, destroyed, returnValue }`，agent 不用再回查场景就能确认改动。
+
+旧模板（`public static string Run()`）仍然兼容，适合一次性 inspection snippet——不需要结构化追踪的场景。
+
+**什么时候用 `execute_code` vs 专门工具** —— `execute_code` 适合多步编排、新颖查询、或者会被拆成 5-10 个细粒度调用的场景，一段 snippet 比一连串小工具更省。要是单字段组件修改、简单选中切换，或者已有专门工具能搞定的，优先用专门工具——对 LLM 调用成本更低、验证更直接。
 
 ## 与 Coplay 的对比
 

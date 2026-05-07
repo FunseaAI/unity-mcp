@@ -190,7 +190,7 @@ Open your AI client and try: *"Create a 3D platformer level with 5 floating plat
 
 ## Why This Project
 
-- **`execute_code` First** — The package is optimized around one high-flexibility C# execution tool for rich editor/runtime orchestration when many small tools would be noisy
+- **`execute_code` First** — Optimized around one in-memory C# execution tool for rich editor/runtime orchestration. See [`execute_code`: In-Memory C# Execution](#execute_code-in-memory-c-execution) below for details.
 - **Play Mode Automation** — Enter play mode, simulate keyboard/mouse input, capture screenshots, inspect logs, and validate behavior from the same MCP session
 - **Project Context Built In** — Exposes live resources for project state, active scene, selection, compilation, console output, and MCP interaction history
 - **Focused by Default, Full When Needed** — `core` exposes a compact high-signal toolset; `full` exposes all 91 tools
@@ -210,6 +210,37 @@ Open your AI client and try: *"Create a 3D platformer level with 5 floating plat
 - **Project Skills Manager** — Configure project-level skills for supported AI clients, currently installing the default `unity-mcp-workflow` skill
 - **Plugin Settings** — Toggle verbose plugin debug logging when troubleshooting MCP connections or tool execution
 - **Vendor Agnostic** — Works with any AI client that supports MCP: Claude Code, Cursor, Windsurf, Codex, VS Code Copilot, etc.
+
+## `execute_code`: In-Memory C# Execution
+
+`execute_code` is the heart of Funplay MCP for Unity. It lets an AI write a C# snippet, compile it **in memory**, and run it on the editor thread — the agent gets the full Unity Editor and runtime API surface without writing any files to disk.
+
+- **Zero-footprint compilation** — Snippets are compiled via CodeDom into an in-memory assembly and executed by reflection. No `.cs` files are written under `Assets/`, no domain reload is triggered, no project state is touched beyond what the snippet itself does.
+- **Editor-ready before it runs** — Each call refreshes the AssetDatabase and waits for any pending compilation to settle before compiling the snippet, so external file edits are picked up automatically without a separate `request_recompile`.
+- **Auto-Undo + structured logs (recommended template)** — Implement `IFunplayCommand` and use the injected `ExecutionContext` so every created / modified / destroyed object participates in editor Undo, and the changelog is returned to the agent.
+
+```csharp
+using UnityEngine;
+using UnityEditor;
+using Funplay.Editor.Tools.Scripting;
+
+public class CommandScript : IFunplayCommand
+{
+    public void Execute(ExecutionContext ctx)
+    {
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        ctx.RegisterObjectCreation(go);          // auto-Undo + tracked
+        ctx.Log("Created {0}", go.name);
+        ctx.ReturnValue = new { instanceId = go.GetInstanceID() };
+    }
+}
+```
+
+The response carries `{ logs, created, modified, destroyed, returnValue }`, so the agent can verify exactly what changed without re-querying the scene.
+
+The legacy template (`public static string Run()`) is still supported — useful for one-off inspection snippets where structured tracking is overkill.
+
+**When to reach for `execute_code` vs a specialized tool** — `execute_code` shines for multi-step orchestration, novel reads, and situations where chaining 5–10 narrow tool calls would be noisier than one snippet. For single-field component edits, simple selection changes, or anything covered by an existing tool, prefer the dedicated tool — it is cheaper for the LLM to call and easier to verify.
 
 ## Comparison With Coplay
 
