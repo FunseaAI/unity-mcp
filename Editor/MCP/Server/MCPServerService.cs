@@ -122,7 +122,19 @@ namespace Funplay.Editor.MCP.Server
             }
         }
 
-        public async Task StopAsync()
+        public Task StopAsync()
+        {
+            StopSync();
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Synchronously stop the server. Required during
+        /// <c>AssemblyReloadEvents.beforeAssemblyReload</c> and from <see cref="Dispose"/>:
+        /// Unity unloads the AppDomain immediately after these callbacks return and does not
+        /// await fire-and-forget tasks, which would leave the HttpListener bound to the port.
+        /// </summary>
+        public void StopSync()
         {
             if (!_isRunning) return;
 
@@ -133,7 +145,7 @@ namespace Funplay.Editor.MCP.Server
                 if (_transport != null)
                 {
                     _transport.OnRequestReceived -= HandleRequestReceived;
-                    await _transport.StopAsync();
+                    _transport.Stop();
                     _transport.Dispose();
                     _transport = null;
                 }
@@ -266,7 +278,7 @@ namespace Funplay.Editor.MCP.Server
             if (_disposed) return;
             _disposed = true;
             _settings.OnSettingsChanged -= HandleSettingsChanged;
-            _ = StopAsync();
+            StopSync();
         }
 
         private void CheckForInterruptedExecution()

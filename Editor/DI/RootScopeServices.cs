@@ -36,8 +36,11 @@ namespace Funplay.Editor.DI
                 unityLogsRepository?.StartListening();
 
                 var settings = _serviceProvider.GetService(typeof(ISettingsController)) as ISettingsController;
-                if (settings?.MCPServerEnabled == true)
+                if (settings?.MCPServerEnabled == true &&
+                    !MCPServerDomainReloadHandler.IsPendingPostReloadRestart())
                 {
+                    // Cold-start path only. During a domain reload, OnAfterReload owns the restart
+                    // so the previous AppDomain's listener has time to release the port.
                     var mcpServer = _serviceProvider.GetService(typeof(MCPServerService)) as MCPServerService;
                     if (mcpServer != null)
                     {

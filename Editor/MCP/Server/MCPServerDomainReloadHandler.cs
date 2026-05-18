@@ -51,13 +51,27 @@ namespace Funplay.Editor.MCP.Server
                 var mcpServer = RootScopeServices.Services?.GetService(typeof(MCPServerService)) as MCPServerService;
                 if (mcpServer?.IsRunning == true)
                 {
-                    _ = mcpServer.StopAsync();
+                    // Must run synchronously: Unity unloads the AppDomain right after this callback
+                    // returns and will not wait for a fire-and-forget Stop task. Awaiting was the
+                    // root cause of port 8765 staying bound across reloads (issue #1).
+                    mcpServer.StopSync();
                 }
             }
             catch (System.Exception ex)
             {
                 Debug.LogError($"[Funplay MCP Server] Error in OnBeforeReload: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// True when a domain reload just happened and the post-reload auto-restart in
+        /// <see cref="OnAfterReload"/> is going to (re)start the server. Other startup paths
+        /// (eg. <c>RootScopeServices.Initialize</c>) should skip auto-start in this case to avoid
+        /// racing two <c>StartAsync</c> calls against a port that may still be releasing.
+        /// </summary>
+        internal static bool IsPendingPostReloadRestart()
+        {
+            return SessionState.GetBool(WasRunningKey, false);
         }
 
         private static void OnAfterReload()

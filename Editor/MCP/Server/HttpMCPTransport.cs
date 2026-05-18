@@ -60,7 +60,13 @@ namespace Funplay.Editor.MCP.Server
 
         public Task StopAsync()
         {
-            if (!_isRunning) return Task.CompletedTask;
+            Stop();
+            return Task.CompletedTask;
+        }
+
+        public void Stop()
+        {
+            if (!_isRunning) return;
             try
             {
                 _cts?.Cancel();
@@ -73,7 +79,6 @@ namespace Funplay.Editor.MCP.Server
             {
                 Debug.LogError($"[Funplay MCP Server] Error stopping HTTP transport: {ex.Message}");
             }
-            return Task.CompletedTask;
         }
 
         private async Task ListenLoopAsync(CancellationToken ct)
@@ -310,7 +315,7 @@ namespace Funplay.Editor.MCP.Server
 
         public void Dispose()
         {
-            _ = StopAsync();
+            Stop();
             _cts?.Dispose();
             _listener = null;
         }

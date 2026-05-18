@@ -15,6 +15,14 @@ namespace Funplay.Editor.MCP.Server
         bool IsRunning { get; }
         Task<bool> StartAsync(CancellationToken ct = default);
         Task StopAsync();
+
+        /// <summary>
+        /// Synchronously release transport resources. Required during
+        /// <c>AssemblyReloadEvents.beforeAssemblyReload</c> because Unity unloads the AppDomain
+        /// immediately after callbacks return and does not await pending Tasks.
+        /// </summary>
+        void Stop();
+
         event Action<MCPRequest, Action<MCPResponse>> OnRequestReceived;
     }
 
